@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chapter Two 精读可视化讲义（双语互动版）</title>
+<style>
+  :root{
+    --bg1:#f4f7ff;--bg2:#eef4ff;--card:rgba(255,255,255,.92);--line:#dce4ff;
+    --primary:#3559c7;--primary2:#6f63ff;--text:#1f2a44;--muted:#5b6a8f;--shadow:0 14px 36px rgba(53,89,199,.14);
+    --radius:22px;--en-font:Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;color:var(--text);
+    background:radial-gradient(circle at top left,#fff 0,transparent 28%),radial-gradient(circle at bottom right,#dfe8ff 0,transparent 28%),linear-gradient(135deg,var(--bg1),var(--bg2));
+    line-height:1.6;
+  }
+  .app{width:min(1520px,95vw);margin:18px auto 28px;display:grid;gap:16px}
+  .panel{background:var(--card);border:1px solid rgba(255,255,255,.8);box-shadow:var(--shadow);border-radius:var(--radius);backdrop-filter:blur(8px)}
+  .hero{padding:24px 28px;position:relative;overflow:hidden}
+  .hero:after{content:"";position:absolute;right:-36px;top:-44px;width:180px;height:180px;background:radial-gradient(circle,rgba(111,99,255,.18),transparent 72%)}
+  h1{margin:0 0 6px;font-size:clamp(2rem,3.7vw,3rem);line-height:1.15;color:#2947a5}
+  .subtitle{color:var(--muted);font-size:1.02rem;max-width:82ch;margin-bottom:14px}
+  .badge-row,.mini-row,.tag-row{display:flex;flex-wrap:wrap;gap:10px}
+  .badge,.tag,.mini{padding:8px 14px;border-radius:999px;font-weight:800;font-size:.93rem;background:rgba(92,124,255,.1);border:1px solid rgba(92,124,255,.18);color:#28439f}
+  .tag{background:#fff7ec;border-color:#f5d6ae;color:#9a5e18}
+  .layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:16px;align-items:start}
+  .side{position:sticky;top:14px;display:grid;gap:16px}
+  .side-card{padding:16px 16px 18px}
+  .side-title{margin:0 0 10px;font-size:1.02rem;color:#2e4dae}
+  .toc{display:grid;gap:8px}
+  .toc a{text-decoration:none;color:#2947a5;font-weight:700;font-size:.95rem;padding:10px 12px;border-radius:14px;background:#f5f8ff;border:1px solid #e2e9ff}
+  .toc a:hover{background:#edf3ff}
+  .control-box{display:grid;gap:12px}
+  label.control{display:grid;gap:6px;color:#35509c;font-weight:800;font-size:.92rem}
+  select,input[type=range]{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px}
+  .live-note{font-size:.88rem;color:var(--muted);line-height:1.65}
+  .main{display:grid;gap:16px}
+  .section{padding:20px 22px}
+  .section h2{margin:0 0 6px;font-size:1.55rem;color:#2e4dae}
+  .section p.lead{margin:0;color:var(--muted)}
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+  .card{background:linear-gradient(180deg,#fff,#f6f9ff);border:1px solid #e1e8ff;border-radius:20px;padding:16px}
+  .card h3{margin:0 0 8px;font-size:1.05rem;color:#2947a5}
+  .small{color:var(--muted);font-size:.93rem}
+  .tree{display:grid;gap:12px;margin-top:16px}
+  .tree-item{border:1px solid #e1e8ff;border-radius:18px;background:#fff;padding:14px 14px 10px}
+  .tree-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+  .tree-head strong{font-size:1.03rem;color:#2947a5}
+  .pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#eef3ff;border:1px solid #dbe4ff;color:#4963ab;font-weight:800;font-size:.84rem}
+  .branch{display:flex;flex-wrap:wrap;gap:8px}
+  .branch span{padding:8px 12px;border-radius:999px;background:#f7f9ff;border:1px solid #e5ebff;font-weight:700;color:#35509c;font-size:.9rem}
+  .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:18px}
+  .step{position:relative;padding:16px;border-radius:22px;background:linear-gradient(180deg,#fff,#f4f8ff);border:1px solid #e1e8ff;min-height:220px}
+  .step:not(:last-child)::after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#4563d8,#7c67ff);color:#fff;font-weight:900;box-shadow:0 10px 20px rgba(69,99,216,.18)}
+  .step-no{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eef3ff;color:#35509c;font-weight:900;font-size:.82rem}
+  .step h3{margin:10px 0 8px;color:#27439c}
+  .step ul{margin:0;padding-left:18px}
+  .compare{width:100%;border-collapse:collapse;margin-top:16px;font-size:.96rem;background:#fff;border-radius:18px;overflow:hidden}
+  .compare th,.compare td{padding:12px 12px;border:1px solid #e7edff;vertical-align:top}
+  .compare th{background:#eef4ff;color:#35509c;text-align:left}
+  .diagram{display:grid;gap:10px;margin-top:16px}
+  .group{border:1px solid #dde6ff;border-radius:18px;background:#fff;padding:14px}
+  .group-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .group-title strong{color:#2947a5;font-size:1.02rem}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips span{padding:8px 12px;border-radius:999px;background:#f4f7ff;border:1px solid #e2e9ff;color:#445fa9;font-weight:700;font-size:.9rem}
+  .chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:16px}
+  .chain-item{position:relative;text-align:center;padding:16px 12px;border-radius:20px;background:#fff;border:1px solid #e2e9ff;font-weight:800;color:#2947a5;min-height:120px;display:grid;place-items:center}
+  .chain-item:not(:last-child)::after{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#edf2ff;border:1px solid #dbe4ff;color:#4c63a6;font-weight:900}
+  .sentence-card{border:1px solid #e1e8ff;border-radius:22px;background:#fff;padding:16px;margin-top:14px}
+  .sentence-card h3{margin:0 0 10px;color:#2947a5}
+  .original{font-size:1.03rem;font-weight:700;color:#23345a;background:#f7faff;border:1px solid #e7edff;padding:12px 14px;border-radius:16px;font-family:var(--en-font)}
+  .analysis-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:12px}
+  .box{background:#fcfdff;border:1px solid #e8eeff;border-radius:16px;padding:12px}
+  .box h4{margin:0 0 6px;color:#35509c}
+  .list{margin:0;padding-left:18px}
+  .zh-note{font-size:.9rem;color:#6d7ca5;margin-top:8px}
+  .fulltext-wrap{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start;margin-top:16px}
+  .glossary-live{position:sticky;top:16px;background:linear-gradient(180deg,#fff,#f7faff);border:1px solid #dfe8ff;border-radius:20px;padding:16px;box-shadow:0 10px 22px rgba(53,89,199,.08)}
+  .glossary-live h3{margin:0 0 10px;color:#2f4daa;font-size:1.06rem}
+  .glossary-live .term-name{font-size:1.5rem;font-weight:900;color:#c95575;line-height:1.15}
+  .glossary-live .term-phone{margin-top:6px;color:#5168a6;font-family:Georgia,serif}
+  .glossary-live .term-zh{margin-top:10px;font-size:1.05rem;font-weight:800;color:#304ea8}
+  .glossary-live .term-type{display:inline-flex;margin-top:10px;padding:5px 10px;border-radius:999px;background:#eef3ff;border:1px solid #dbe4ff;color:#4c63a6;font-size:.84rem;font-weight:800}
+  .glossary-live button{margin-top:12px;border:none;background:linear-gradient(135deg,#4563d8,#7c67ff);color:#fff;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+  .glossary-help{font-size:.92rem;color:#6678aa;line-height:1.7}
+  .chapter-stack{display:grid;gap:14px}
+  details.chapter-detail{border:1px solid #dfe7ff;border-radius:22px;background:#fff;overflow:hidden}
+  details.chapter-detail > summary{cursor:pointer;list-style:none;padding:16px 18px;background:linear-gradient(180deg,#f8fbff,#f2f6ff);display:grid;gap:4px}
+  details.chapter-detail > summary::-webkit-details-marker{display:none}
+  details.chapter-detail > summary span:first-child{font-size:1.12rem;font-weight:900;color:#2947a5}
+  .summary-sub{font-size:.92rem;color:#5f73a7;font-weight:600}
+  .chapter-body{padding:18px}
+  .reading-tip{margin-bottom:14px;padding:12px 14px;border-radius:16px;background:#fff8ef;border:1px solid #f0dbc0;color:#7d6347;font-size:.92rem}
+  .reading-block{border:1px solid #e3e9ff;border-radius:18px;background:linear-gradient(180deg,#fff,#fbfcff);padding:14px 14px 12px;margin-bottom:12px}
+  .reading-head{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;margin-bottom:10px}
+  .reading-kicker{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:#edf2ff;border:1px solid #dbe4ff;color:#4f67a6;font-weight:900;font-size:.82rem}
+  .reading-title{font-weight:900;color:#2f4daa}
+  .play-para,.play-line{border:none;cursor:pointer;background:#fff;border:1px solid #dbe4ff;color:#4560a8;border-radius:10px;font-weight:800}
+  .play-para{padding:8px 12px}
+  .play-line{padding:6px 8px;min-width:42px}
+  .reading-english{display:grid;gap:8px}
+  .line-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:8px 0;border-top:1px dashed #e9eeff}
+  .line-row:first-child{border-top:none;padding-top:0}
+  .en-line{font-family:var(--en-font);font-size:1.06rem;line-height:1.72;color:#253759}
+  .reading-chinese{margin-top:10px;padding:10px 12px;border-radius:14px;background:#f7f9ff;border:1px solid #e7edff;font-size:.86rem;line-height:1.8;color:#6b7898}
+  .gloss-term{cursor:pointer;padding:0 .22em;border-radius:.22em;font-weight:800;transition:.18s ease;display:inline}
+  .gloss-term.word{background:linear-gradient(180deg,rgba(255,212,224,.78),rgba(255,212,224,.78))}
+  .gloss-term.phrase{background:linear-gradient(180deg,rgba(196,218,255,.85),rgba(196,218,255,.85))}
+  .gloss-term.active{box-shadow:0 0 0 2px rgba(69,99,216,.18) inset}
+  .inline-pop{display:none;margin-left:.35em;padding:.18em .45em;border-radius:999px;background:#fff;border:1px solid #dce5ff;color:#35509c;font-size:.78rem;font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;vertical-align:middle}
+  .gloss-term.active .inline-pop{display:inline-flex}
+  .footer{text-align:center;color:#6174a4;font-size:.95rem;padding:8px 0 4px}
+  @media (max-width:1200px){
+    .layout{grid-template-columns:1fr}
+    .side{position:static}
+    .grid-2,.grid-3,.flow,.chain,.analysis-grid,.fulltext-wrap{grid-template-columns:1fr 1fr}
+    .glossary-live{position:static}
+  }
+  @media (max-width:780px){
+    .grid-2,.grid-3,.flow,.chain,.analysis-grid,.fulltext-wrap{grid-template-columns:1fr}
+    .step:not(:last-child)::after,.chain-item:not(:last-child)::after{display:none}
+    .reading-head{grid-template-columns:auto 1fr}
+    .play-para{grid-column:1/-1;justify-self:start}
+  }
+
+  .toc a{display:grid;gap:2px}
+  .toc-en{font-weight:900;color:#27439c;font-size:.92rem;line-height:1.3}
+  .toc-zh{font-size:.83rem;color:#6a79a1;line-height:1.35}
+  .badge,.mini,.tag,.card h3,.card p.small,.tree-head strong,.branch span,.step h3,.step li,.group-title strong,.chips span,.chain-item,.section p.lead,.sentence-card .original,.sentence-card .box,.reading-title,.subtitle,.side .live-note{position:relative}
+</style>
+</head>
+<body>
+<div class="app">
+<section class="panel hero">
+<h1>Chapter Two 精读可视化讲义（双语互动版）</h1>
+<div class="subtitle">Automotive Engine Assembly｜把“分类、结构、过程、对比、长难句”和“完整原文双语精读”整合到同一份 HTML 里。展开即可逐段阅读，点击高亮词汇即可查看释义，英文可逐句或逐段朗读。</div>
+<div class="badge-row">
+<div class="badge">精读主题：Engine Assembly</div>
+<div class="badge">三大板块：2.1 / 2.2 / 2.3</div>
+<div class="badge">核心方式：图式精读 + 原文双语 + 互动词汇</div>
+<div class="badge">用途：课堂讲解 / 课后复习 / PPT 改编</div>
+</div>
+</section>
+<div class="layout">
+<aside class="side">
+<section class="panel side-card">
+<h3 class="side-title">阅读路线</h3>
+<div class="toc"><a href="#overview"><span class="toc-en annotate-target">Overview Map</span><span class="toc-zh">全章总览图</span></a><a href="#classify"><span class="toc-en annotate-target">Classification Tree</span><span class="toc-zh">发动机分类树</span></a><a href="#cycle"><span class="toc-en annotate-target">Four-Stroke Flow</span><span class="toc-zh">四冲程流程图</span></a><a href="#compare"><span class="toc-en annotate-target">Comparison Table</span><span class="toc-zh">汽油机 / 柴油机对比</span></a><a href="#crank"><span class="toc-en annotate-target">Structure Diagram</span><span class="toc-zh">曲柄连杆机构结构图</span></a><a href="#valve"><span class="toc-en annotate-target">Working Chain</span><span class="toc-zh">配气机构工作链图</span></a><a href="#sentences"><span class="toc-en annotate-target">Sentence Parsing</span><span class="toc-zh">长难句精读卡</span></a><a href="#fulltext"><span class="toc-en annotate-target">Bilingual Intensive Reading</span><span class="toc-zh">原文双语精读（手动展开）</span></a></div>
+</section>
+<section class="panel side-card">
+<h3 class="side-title">朗读设置</h3>
+<div class="control-box">
+<label class="control">语音选择
+            <select id="voiceSelect"></select>
+</label>
+<label class="control">语速
+            <input id="rateRange" max="1.15" min="0.75" step="0.05" type="range" value="0.9"/>
+</label>
+</div>
+<div class="live-note">点击每句左侧的 🔊 可以朗读单句；点击“朗读本段”可以播放整段英文。</div>
+</section>
+<section class="panel side-card">
+<h3 class="side-title">精读抓手</h3>
+<div class="mini-row">
+<div class="mini">classification</div>
+<div class="mini">operation</div>
+<div class="mini">structure</div>
+<div class="mini">function</div>
+<div class="mini">comparison</div>
+<div class="mini">sentence parsing</div>
+</div>
+</section>
+<section class="panel side-card">
+<h3 class="side-title">课堂建议</h3>
+<div class="small">先讲“总览图”，再讲每节的核心图式，最后展开原文做逐段精读。学生先有结构，再看句子，不容易被大段专业文字压住。</div>
+</section>
+</aside>
+<main class="main">
+<section class="panel section" id="overview">
+<h2>1. 全章总览图</h2>
+<p class="lead">整篇文章可以先压缩成“三大模块 + 三种阅读任务”：2.1 看分类与工作过程，2.2 看结构与功能，2.3 看配气机构与时序控制。</p>
+<div class="grid-3">
+<div class="card"><h3>2.1 Engine Assembly</h3><div class="tag-row"><span class="tag">classification</span><span class="tag">operation</span></div><p class="small">核心问题：发动机怎么分类？四冲程汽油机和柴油机怎样工作？</p></div>
+<div class="card"><h3>2.2 Crank-Connecting Rod Mechanism</h3><div class="tag-row"><span class="tag">structure</span><span class="tag">function</span></div><p class="small">核心问题：曲柄连杆机构由哪些部分组成？它如何把往复运动变成旋转运动？</p></div>
+<div class="card"><h3>2.3 The Valve Train</h3><div class="tag-row"><span class="tag">valves</span><span class="tag">timing</span></div><p class="small">核心问题：配气机构由什么组成？它怎样精确控制进排气气门？</p></div>
+</div>
+</section>
+<section class="panel section" id="classify">
+<h2>2. 发动机分类树</h2>
+<p class="lead">2.1.1 最适合用树状结构阅读。每一段都在回答同一个问题：<strong>internal combustion engines can be classified by what?</strong></p>
+<div class="tree">
+<div class="tree-item"><div class="tree-head"><strong>Based on the Fuel Used</strong><span class="pill">燃料</span></div><div class="branch"><span>petrol engine / spark-ignition engine</span><span>diesel engine / compression-ignition engine</span></div></div>
+<div class="tree-item"><div class="tree-head"><strong>Based on the Number of Strokes Per Cycle</strong><span class="pill">冲程</span></div><div class="branch"><span>four-stroke cycle engine</span><span>two-stroke cycle engine</span></div></div>
+<div class="tree-item"><div class="tree-head"><strong>Based on the Number of Cylinders</strong><span class="pill">气缸数</span></div><div class="branch"><span>single-cylinder engine</span><span>multi-cylinder engine</span><span>inline-four engine</span></div></div>
+<div class="tree-item"><div class="tree-head"><strong>Based on the Arrangement of Cylinder</strong><span class="pill">排列形式</span></div><div class="branch"><span>inline engine</span><span>V engine</span><span>W engine</span><span>horizontal engine</span></div></div>
+<div class="tree-item"><div class="tree-head"><strong>Based on the Pressure Boost</strong><span class="pill">增压方式</span></div><div class="branch"><span>naturally aspirated engine</span><span>supercharged engine</span></div></div>
+</div>
+</section>
+<section class="panel section" id="cycle">
+<h2>3. 四冲程流程图</h2>
+<p class="lead">2.1.2 的阅读重点不是死背大段文字，而是抓住<strong>动作链</strong>：活塞怎么运动，气门怎么开闭，气缸里发生什么。</p>
+<div class="flow">
+<div class="step"><div class="step-no">Step 1</div><h3>Intake</h3><ul><li>piston: <strong>TDC → BDC</strong></li><li>valve: intake valve open</li><li>function: air-fuel mixture enters the cylinder</li></ul></div>
+<div class="step"><div class="step-no">Step 2</div><h3>Compression</h3><ul><li>piston: <strong>BDC → TDC</strong></li><li>valve: both valves closed</li><li>function: compress the air-fuel mixture</li></ul></div>
+<div class="step"><div class="step-no">Step 3</div><h3>Combustion / Power</h3><ul><li>piston: <strong>TDC → BDC</strong></li><li>ignition: spark plug ignites mixture</li><li>function: mechanical work turns the crankshaft</li></ul></div>
+<div class="step"><div class="step-no">Step 4</div><h3>Exhaust</h3><ul><li>piston: <strong>BDC → TDC</strong></li><li>valve: exhaust valve open</li><li>function: spent gases are expelled</li></ul></div>
+</div>
+</section>
+<section class="panel section" id="compare">
+<h2>4. 汽油机与柴油机对比表</h2>
+<p class="lead">精读说明文时，最有效的方式之一是把“相似 + 不同”做成横向对比。</p>
+<table class="compare">
+<thead><tr><th>对比点</th><th>Petrol Engine</th><th>Diesel Engine</th></tr></thead>
+<tbody>
+<tr><td>点火方式</td><td>ignited by a <strong>spark plug</strong></td><td>ignited by <strong>heat generated by high compression</strong></td></tr>
+<tr><td>进入燃烧室的内容</td><td>air-fuel mixture</td><td>air first, then fuel is injected</td></tr>
+<tr><td>关键词</td><td>spark-ignition engine</td><td>compression-ignition engine</td></tr>
+<tr><td>精读提示</td><td>抓 <strong>spark / ignition / mixture</strong></td><td>抓 <strong>compressed air / injected / heat</strong></td></tr>
+</tbody>
+</table>
+</section>
+<section class="panel section" id="crank">
+<h2>5. 曲柄连杆机构结构图</h2>
+<p class="lead">2.2 的最佳读法是“总—分”。先抓总功能，再看三大组成部分。</p>
+<div class="card"><h3>核心功能</h3><p class="small annotate">The crank-connecting rod mechanism changes the gas force on the piston into crankshaft rotation torque, so that thermal energy can be converted into mechanical energy.</p></div>
+<div class="diagram">
+<div class="group"><div class="group-title"><strong>Engine Block Group</strong><span class="pill">机体组</span></div><div class="chips"><span>cylinder block</span><span>crankcase</span><span>cylinder head</span><span>cylinder liner</span><span>cylinder gasket</span><span>oil pan</span></div></div>
+<div class="group"><div class="group-title"><strong>Piston and Connecting Rod Group</strong><span class="pill">活塞连杆组</span></div><div class="chips"><span>piston</span><span>piston ring</span><span>piston pin</span><span>connecting rod</span></div></div>
+<div class="group"><div class="group-title"><strong>Crankshaft and Flywheel Group</strong><span class="pill">曲轴飞轮组</span></div><div class="chips"><span>crankshaft</span><span>main bearings</span><span>flywheel</span></div></div>
+</div>
+</section>
+<section class="panel section" id="valve">
+<h2>6. 配气机构工作链图</h2>
+<p class="lead">2.3 的核心不是零散名词，而是看清“谁推动谁”。一旦链条顺了，学生就能理解 valve train 的工作逻辑。</p>
+<div class="chain">
+<div class="chain-item">camshaft</div><div class="chain-item">lifter</div><div class="chain-item">pushrod</div><div class="chain-item">rocker arm</div><div class="chain-item">valve</div>
+</div>
+<div class="grid-2">
+<div class="card"><h3>Valve Assembly</h3><div class="chips"><span>valve</span><span>spring</span><span>spring retainer</span><span>valve locks</span><span>valve guide seal</span></div></div>
+<div class="card"><h3>Timing Control</h3><div class="chips"><span>timing chain</span><span>timing belt</span><span>timing gear</span><span>synchronisation</span><span>valve overlap</span></div></div>
+</div>
+<table class="compare">
+<thead><tr><th>项目</th><th>SOHC</th><th>DOHC</th></tr></thead>
+<tbody><tr><td>camshaft 数量</td><td>single overhead camshaft</td><td>double / dual overhead cam</td></tr><tr><td>基本特点</td><td>one camshaft per cylinder head</td><td>one for intake and one for exhaust</td></tr></tbody>
+</table>
+</section>
+<section class="panel section" id="sentences">
+<h2>7. 长难句精读卡</h2>
+<p class="lead">说明文精读最好做成“原句—主干—关键词—中文逻辑”四步卡片。下面挑了三句最值得精讲的句子。</p>
+<div class="sentence-card">
+<h3>句 1｜分类总句</h3>
+<div class="original annotate">There are several possible ways to classify internal combustion engines.</div>
+<div class="analysis-grid">
+<div class="box">
+<h4>句子主干</h4>
+<div class="en-core">There are several possible ways to classify internal combustion engines.</div>
+<div class="zh-note">内燃机有多种分类方式。这是 2.1.1 的总起句，后面所有内容都在展开这个句子。</div>
+</div>
+<div class="box">
+<h4>关键词提示</h4>
+<ul class="list"><li>There are ... ways to ... 是常见的说明文总起结构。</li><li>classify 表示“分类，归类”。</li><li>internal combustion engines 是本章总主题“内燃机”。</li></ul>
+</div>
+</div>
+</div>
+<div class="sentence-card">
+<h3>句 2｜功能总句</h3>
+<div class="original annotate">Its main function is to turn the gas force on the piston into crankshaft rotation torque.</div>
+<div class="analysis-grid">
+<div class="box">
+<h4>句子主干</h4>
+<div class="en-core">Its main function is to turn ... into ...</div>
+<div class="zh-note">它的主要作用是把作用在活塞上的燃气力转化为曲轴旋转所需的转矩。</div>
+</div>
+<div class="box">
+<h4>关键词提示</h4>
+<ul class="list"><li>turn A into B 表示“把 A 转变成 B”。</li><li>gas force on the piston 指燃气作用在活塞上的力。</li><li>crankshaft rotation torque 指曲轴旋转转矩。</li></ul>
+</div>
+</div>
+</div>
+<div class="sentence-card">
+<h3>句 3｜配气传动链</h3>
+<div class="original annotate">The camshaft pushes on the lifter, which pushes on the pushrod, which pushes on the rocker arm, which rotates and pushes down on the valve.</div>
+<div class="analysis-grid">
+<div class="box">
+<h4>句子主干</h4>
+<div class="en-core">The camshaft pushes on the lifter → the lifter pushes on the pushrod → the pushrod pushes on the rocker arm → the rocker arm pushes down on the valve.</div>
+<div class="zh-note">凸轮轴推动挺柱，挺柱推动推杆，推杆推动摇臂，摇臂再向下压动气门。</div>
+</div>
+<div class="box">
+<h4>关键词提示</h4>
+<ul class="list"><li>这类 which 连续定语从句非常适合拆成箭头链。</li><li>整句核心不是背，而是看清谁推动谁。</li><li>它是 2.3 最关键的一句。</li></ul>
+</div>
+</div>
+</div>
+</section>
+<section class="panel section" id="fulltext">
+<h2>8. 原文双语精读（手动展开）</h2>
+<p class="lead">这一部分默认保持简洁：点击章节后再看完整原文。英文下方都配有中文翻译，中文字号更小；重点词汇和短语已做高亮，点击即可在右侧查看释义与读音。</p>
+<div class="fulltext-wrap">
+<div class="chapter-stack">
+<details class="chapter-detail" id="s21">
+<summary>
+<span>2.1 Engine Assembly</span>
+<span class="summary-sub">先看发动机的分类方式，再看四冲程汽油机和柴油机的工作过程。</span>
+</summary>
+<div class="chapter-body">
+<div class="reading-tip">默认先看图式精读；需要逐段精讲时，再展开下面的原文双语阅读卡。英文在上，中文译文在下；中文字号更小，便于学生把注意力放在英文上。</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">01</div>
+<div class="reading-title">Warm-up</div>
+<button class="play-para" data-speak="Discuss with your partner about the following picture and answer questions. What does the engine consist of? What's the function of the engine? Where is the engine located in the car?">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Discuss with your partner about the following picture and answer questions.">🔊</button><div class="en-line annotate">Discuss with your partner about the following picture and answer questions.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="What does the engine consist of?">🔊</button><div class="en-line annotate">What does the engine consist of?</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="What's the function of the engine?">🔊</button><div class="en-line annotate">What's the function of the engine?</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Where is the engine located in the car?">🔊</button><div class="en-line annotate">Where is the engine located in the car?</div></div></div>
+<div class="reading-chinese">和你的搭档根据图片进行讨论并回答问题：发动机由哪些部分组成？它的功能是什么？它位于汽车的哪个位置？</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">02</div>
+<div class="reading-title">2.1.1 Engine Classification</div>
+<button class="play-para" data-speak="There are several possible ways to classify internal combustion engines. The classification of IC engines is given below.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="There are several possible ways to classify internal combustion engines.">🔊</button><div class="en-line annotate">There are several possible ways to classify internal combustion engines.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The classification of IC engines is given below.">🔊</button><div class="en-line annotate">The classification of IC engines is given below.</div></div></div>
+<div class="reading-chinese">内燃机有多种分类方式。下面列出的是课文中给出的几种典型分类方法。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">03</div>
+<div class="reading-title">Based on the Fuel Used</div>
+<button class="play-para" data-speak="There are two types of engine: petrol engine, which is also called a spark-ignition engine, and diesel engine, which is also called a compression-ignition engine.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="There are two types of engine: petrol engine, which is also called a spark-ignition engine, and diesel engine, which is also called a compression-ignition engine.">🔊</button><div class="en-line annotate">There are two types of engine: petrol engine, which is also called a spark-ignition engine, and diesel engine, which is also called a compression-ignition engine.</div></div></div>
+<div class="reading-chinese">按照所用燃料来分，发动机主要有两类：汽油机，也叫火花点火式发动机；柴油机，也叫压缩点火式发动机。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">04</div>
+<div class="reading-title">Based on the Number of Strokes Per Cycle</div>
+<button class="play-para" data-speak="Engines can be divided into two groups based on the number of piston strokes per cycle, either four or two. An engine which needs four strokes to complete one cycle is a four-stroke cycle engine. If it only needs two strokes to complete a cycle, it is called a two-stroke cycle engine. Thus, a two-cycle engine fires twice as often as a four-cycle engine.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Engines can be divided into two groups based on the number of piston strokes per cycle, either four or two.">🔊</button><div class="en-line annotate">Engines can be divided into two groups based on the number of piston strokes per cycle, either four or two.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="An engine which needs four strokes to complete one cycle is a four-stroke cycle engine.">🔊</button><div class="en-line annotate">An engine which needs four strokes to complete one cycle is a four-stroke cycle engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="If it only needs two strokes to complete a cycle, it is called a two-stroke cycle engine.">🔊</button><div class="en-line annotate">If it only needs two strokes to complete a cycle, it is called a two-stroke cycle engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Thus, a two-cycle engine fires twice as often as a four-cycle engine.">🔊</button><div class="en-line annotate">Thus, a two-cycle engine fires twice as often as a four-cycle engine.</div></div></div>
+<div class="reading-chinese">按照每个工作循环中活塞冲程的数量，发动机可以分为四冲程和二冲程两类。完成一个循环需要四个冲程的叫四冲程发动机，只需要两个冲程的叫二冲程发动机。因此，二冲程发动机的做功频率会比四冲程发动机更高。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">05</div>
+<div class="reading-title">Based on the Number of Cylinders</div>
+<button class="play-para" data-speak="According to the number of cylinders, the engine can be divided into single-cylinder and multi-cylinder. A single-cylinder engine is a basic piston engine configuration of an internal combustion engine. It is often seen on motorcycles. A multi-cylinder engine is a reciprocating internal combustion engine with multiple cylinders. The inline-four engine is a type of inline internal combustion four-cylinder engine with all four cylinders mounted in a straight line.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="According to the number of cylinders, the engine can be divided into single-cylinder and multi-cylinder.">🔊</button><div class="en-line annotate">According to the number of cylinders, the engine can be divided into single-cylinder and multi-cylinder.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A single-cylinder engine is a basic piston engine configuration of an internal combustion engine.">🔊</button><div class="en-line annotate">A single-cylinder engine is a basic piston engine configuration of an internal combustion engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="It is often seen on motorcycles.">🔊</button><div class="en-line annotate">It is often seen on motorcycles.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A multi-cylinder engine is a reciprocating internal combustion engine with multiple cylinders.">🔊</button><div class="en-line annotate">A multi-cylinder engine is a reciprocating internal combustion engine with multiple cylinders.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The inline-four engine is a type of inline internal combustion four-cylinder engine with all four cylinders mounted in a straight line.">🔊</button><div class="en-line annotate">The inline-four engine is a type of inline internal combustion four-cylinder engine with all four cylinders mounted in a straight line.</div></div></div>
+<div class="reading-chinese">按照气缸数量来分，发动机可以分为单缸发动机和多缸发动机。单缸发动机是最基本的活塞式内燃机形式，常见于摩托车。多缸发动机则具有多个气缸，其中直列四缸发动机就是把四个气缸按一条直线排列起来的一种形式。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">06</div>
+<div class="reading-title">Based on the Arrangement of Cylinder</div>
+<button class="play-para" data-speak="The four basic cylinder arrangements of engine are inline engine, V engine, W engine, and horizontal engine. Inline engine is the simplest and most common arrangement, with all cylinders arranged vertically in line. If an engine has more than eight cylinders, it becomes difficult to make a sufficiently rigid frame and crankshaft with an inline arrangement. Also, the engine becomes quite long and takes up considerable space. The V-arrangement, with two connecting rods attached to each crankpin, permits reducing the engine length by almost one-half, thus making it much more rigid, with a stiff crankshaft. Cylinders lying in one line are called a bank, and the angle between the banks may vary, in manufacturing practice, from 30° to 120°, the most common angles being between 40° and 75°. A W engine is a type of engine arranged with its cylinders in a configuration in which the cylinder banks resemble the letter W, in the same way those of a V engine resemble the letter V. A horizontal engine is a V engine with the angle between the banks increased to 180°. This arrangement is used where there is little headroom, as in trucks.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The four basic cylinder arrangements of engine are inline engine, V engine, W engine, and horizontal engine.">🔊</button><div class="en-line annotate">The four basic cylinder arrangements of engine are inline engine, V engine, W engine, and horizontal engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Inline engine is the simplest and most common arrangement, with all cylinders arranged vertically in line.">🔊</button><div class="en-line annotate">Inline engine is the simplest and most common arrangement, with all cylinders arranged vertically in line.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="If an engine has more than eight cylinders, it becomes difficult to make a sufficiently rigid frame and crankshaft with an inline arrangement.">🔊</button><div class="en-line annotate">If an engine has more than eight cylinders, it becomes difficult to make a sufficiently rigid frame and crankshaft with an inline arrangement.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Also, the engine becomes quite long and takes up considerable space.">🔊</button><div class="en-line annotate">Also, the engine becomes quite long and takes up considerable space.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The V-arrangement, with two connecting rods attached to each crankpin, permits reducing the engine length by almost one-half, thus making it much more rigid, with a stiff crankshaft.">🔊</button><div class="en-line annotate">The V-arrangement, with two connecting rods attached to each crankpin, permits reducing the engine length by almost one-half, thus making it much more rigid, with a stiff crankshaft.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Cylinders lying in one line are called a bank, and the angle between the banks may vary, in manufacturing practice, from 30° to 120°, the most common angles being between 40° and 75°.">🔊</button><div class="en-line annotate">Cylinders lying in one line are called a bank, and the angle between the banks may vary, in manufacturing practice, from 30° to 120°, the most common angles being between 40° and 75°.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A W engine is a type of engine arranged with its cylinders in a configuration in which the cylinder banks resemble the letter W, in the same way those of a V engine resemble the letter V.">🔊</button><div class="en-line annotate">A W engine is a type of engine arranged with its cylinders in a configuration in which the cylinder banks resemble the letter W, in the same way those of a V engine resemble the letter V.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A horizontal engine is a V engine with the angle between the banks increased to 180°.">🔊</button><div class="en-line annotate">A horizontal engine is a V engine with the angle between the banks increased to 180°.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This arrangement is used where there is little headroom, as in trucks.">🔊</button><div class="en-line annotate">This arrangement is used where there is little headroom, as in trucks.</div></div></div>
+<div class="reading-chinese">按照气缸排列形式来分，常见的有直列式、V 型、W 型和水平对置式。直列式结构最简单、也最常见，但当气缸数超过八个时，发动机会变得很长，占用很大空间，而且机架和曲轴也更难做到足够刚性。V 型布置可以把发动机长度缩短近一半，使整体更加紧凑坚固。W 型发动机的气缸列形状像字母 W，而水平发动机可以看作两列气缸夹角扩大到 180° 的 V 型发动机，这种结构常用于顶部空间较小的车辆，如卡车。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">07</div>
+<div class="reading-title">Based on the Pressure Boost</div>
+<button class="play-para" data-speak="According to the pressure boost, the engine can be divided into naturally aspirated engine and supercharged engine. A naturally aspirated engine is an internal combustion engine in which air intake depends solely on atmospheric pressure. A supercharged engine is an internal combustion engine which relies on forced induction through a turbocharger or a supercharger.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="According to the pressure boost, the engine can be divided into naturally aspirated engine and supercharged engine.">🔊</button><div class="en-line annotate">According to the pressure boost, the engine can be divided into naturally aspirated engine and supercharged engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A naturally aspirated engine is an internal combustion engine in which air intake depends solely on atmospheric pressure.">🔊</button><div class="en-line annotate">A naturally aspirated engine is an internal combustion engine in which air intake depends solely on atmospheric pressure.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A supercharged engine is an internal combustion engine which relies on forced induction through a turbocharger or a supercharger.">🔊</button><div class="en-line annotate">A supercharged engine is an internal combustion engine which relies on forced induction through a turbocharger or a supercharger.</div></div></div>
+<div class="reading-chinese">按照增压方式来分，发动机可以分为自然吸气发动机和增压发动机。自然吸气发动机的进气完全依靠大气压力，而增压发动机则通过涡轮增压器或机械增压器进行强制进气。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">08</div>
+<div class="reading-title">2.1.2 Four-Stroke-Cycle Petrol Engine Operation</div>
+<button class="play-para" data-speak="A four-stroke petrol engine is an internal combustion engine in which the piston completes four separate strokes while turning a crankshaft. The four separate strokes are termed intake, compression, combustion, and exhaust.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A four-stroke petrol engine is an internal combustion engine in which the piston completes four separate strokes while turning a crankshaft.">🔊</button><div class="en-line annotate">A four-stroke petrol engine is an internal combustion engine in which the piston completes four separate strokes while turning a crankshaft.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The four separate strokes are termed intake, compression, combustion, and exhaust.">🔊</button><div class="en-line annotate">The four separate strokes are termed intake, compression, combustion, and exhaust.</div></div></div>
+<div class="reading-chinese">四冲程汽油机是一种内燃机，在曲轴转动的同时，活塞要完成四个独立冲程。这四个冲程分别是进气、压缩、做功（燃烧）和排气。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">09</div>
+<div class="reading-title">Intake</div>
+<button class="play-para" data-speak="Intake is also known as induction or suction. This stroke of the piston begins at top dead center (TDC) and ends at bottom dead center (BDC). In this stroke, the intake valve must be in the open position while the piston pulls an air-fuel mixture into the cylinder by producing vacuum pressure through its downward motion.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Intake is also known as induction or suction.">🔊</button><div class="en-line annotate">Intake is also known as induction or suction.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This stroke of the piston begins at top dead center (TDC) and ends at bottom dead center (BDC).">🔊</button><div class="en-line annotate">This stroke of the piston begins at top dead center (TDC) and ends at bottom dead center (BDC).</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="In this stroke, the intake valve must be in the open position while the piston pulls an air-fuel mixture into the cylinder by producing vacuum pressure through its downward motion.">🔊</button><div class="en-line annotate">In this stroke, the intake valve must be in the open position while the piston pulls an air-fuel mixture into the cylinder by producing vacuum pressure through its downward motion.</div></div></div>
+<div class="reading-chinese">进气冲程也叫吸入或吸气冲程。这个冲程中，活塞从上止点运动到下止点。进气门必须打开，活塞下行时在气缸内形成真空，把空气与燃油的混合气吸入气缸。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">10</div>
+<div class="reading-title">Compression</div>
+<button class="play-para" data-speak="This stroke begins at BDC, or just at the end of the suction stroke, and ends at TDC. In this stroke, the piston compresses the air-fuel mixture in preparation for ignition during the power stroke. Both the intake and exhaust valves are closed during this stage.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This stroke begins at BDC, or just at the end of the suction stroke, and ends at TDC.">🔊</button><div class="en-line annotate">This stroke begins at BDC, or just at the end of the suction stroke, and ends at TDC.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="In this stroke, the piston compresses the air-fuel mixture in preparation for ignition during the power stroke.">🔊</button><div class="en-line annotate">In this stroke, the piston compresses the air-fuel mixture in preparation for ignition during the power stroke.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Both the intake and exhaust valves are closed during this stage.">🔊</button><div class="en-line annotate">Both the intake and exhaust valves are closed during this stage.</div></div></div>
+<div class="reading-chinese">压缩冲程从下止点开始，到上止点结束。在这个阶段，活塞把混合气压缩起来，为随后的点火和做功做准备。同时，进气门和排气门都处于关闭状态。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">11</div>
+<div class="reading-title">Combustion / Power</div>
+<button class="play-para" data-speak="Combustion is also known as power or ignition. When the piston is at TDC, the compressed air-fuel mixture is ignited by a spark plug in a petrol engine, forcefully returning the piston to BDC. This stroke produces mechanical work from the engine to turn the crankshaft.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Combustion is also known as power or ignition.">🔊</button><div class="en-line annotate">Combustion is also known as power or ignition.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="When the piston is at TDC, the compressed air-fuel mixture is ignited by a spark plug in a petrol engine, forcefully returning the piston to BDC.">🔊</button><div class="en-line annotate">When the piston is at TDC, the compressed air-fuel mixture is ignited by a spark plug in a petrol engine, forcefully returning the piston to BDC.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This stroke produces mechanical work from the engine to turn the crankshaft.">🔊</button><div class="en-line annotate">This stroke produces mechanical work from the engine to turn the crankshaft.</div></div></div>
+<div class="reading-chinese">燃烧冲程也叫做功冲程或点火冲程。当活塞到达上止点时，汽油机中的火花塞会点燃被压缩的混合气，使活塞被强力推回下止点。这个冲程会产生机械功，并驱动曲轴旋转。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">12</div>
+<div class="reading-title">Exhaust</div>
+<button class="play-para" data-speak="Exhaust is also known as outlet. During the exhaust stroke, the piston once again returns from BDC to TDC while the exhaust valve is open. This action expels the spent air-fuel mixture through the exhaust valve.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Exhaust is also known as outlet.">🔊</button><div class="en-line annotate">Exhaust is also known as outlet.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="During the exhaust stroke, the piston once again returns from BDC to TDC while the exhaust valve is open.">🔊</button><div class="en-line annotate">During the exhaust stroke, the piston once again returns from BDC to TDC while the exhaust valve is open.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This action expels the spent air-fuel mixture through the exhaust valve.">🔊</button><div class="en-line annotate">This action expels the spent air-fuel mixture through the exhaust valve.</div></div></div>
+<div class="reading-chinese">排气冲程也叫排出冲程。此时活塞再次从下止点回到上止点，排气门打开，燃烧后的废气经排气门排出气缸。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">13</div>
+<div class="reading-title">2.1.3 Four-Stroke-Cycle Diesel Engine Operation</div>
+<button class="play-para" data-speak="A four-stroke-cycle diesel engine differs from the petrol engine by using highly compressed hot air to ignite the fuel rather than using a spark plug. In the diesel engine, only air is initially introduced into the combustion chamber. The high compression causes the temperature of the air to rise. At about the top of the compression stroke, fuel is injected directly into the compressed air in the combustion chamber. The fuel injector ensures that the fuel is broken down into small droplets, and that the fuel is distributed evenly. The compressed air-fuel mixture is ignited by heat generated by high compression.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A four-stroke-cycle diesel engine differs from the petrol engine by using highly compressed hot air to ignite the fuel rather than using a spark plug.">🔊</button><div class="en-line annotate">A four-stroke-cycle diesel engine differs from the petrol engine by using highly compressed hot air to ignite the fuel rather than using a spark plug.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="In the diesel engine, only air is initially introduced into the combustion chamber.">🔊</button><div class="en-line annotate">In the diesel engine, only air is initially introduced into the combustion chamber.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The high compression causes the temperature of the air to rise.">🔊</button><div class="en-line annotate">The high compression causes the temperature of the air to rise.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="At about the top of the compression stroke, fuel is injected directly into the compressed air in the combustion chamber.">🔊</button><div class="en-line annotate">At about the top of the compression stroke, fuel is injected directly into the compressed air in the combustion chamber.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The fuel injector ensures that the fuel is broken down into small droplets, and that the fuel is distributed evenly.">🔊</button><div class="en-line annotate">The fuel injector ensures that the fuel is broken down into small droplets, and that the fuel is distributed evenly.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The compressed air-fuel mixture is ignited by heat generated by high compression.">🔊</button><div class="en-line annotate">The compressed air-fuel mixture is ignited by heat generated by high compression.</div></div></div>
+<div class="reading-chinese">四冲程柴油机与汽油机的主要区别在于：它不是用火花塞点火，而是依靠高压缩产生的高温空气来点燃燃油。柴油机开始时先把空气吸入燃烧室，高压缩会使空气温度升高。到压缩冲程接近结束时，燃油被直接喷入高温高压空气中，喷油器会把燃油雾化成细小液滴并尽量均匀分布，随后混合气在高压缩产生的热量作用下自行点燃。</div>
+</div>
+</div>
+</details>
+<details class="chapter-detail" id="s22">
+<summary>
+<span>2.2 Crank-Connecting Rod Mechanism</span>
+<span class="summary-sub">重点理解三大组成部分，以及它如何把活塞的往复运动转变成曲轴的旋转运动。</span>
+</summary>
+<div class="chapter-body">
+<div class="reading-tip">默认先看图式精读；需要逐段精讲时，再展开下面的原文双语阅读卡。英文在上，中文译文在下；中文字号更小，便于学生把注意力放在英文上。</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">01</div>
+<div class="reading-title">Warm-up</div>
+<button class="play-para" data-speak="Discuss with your partner about the following passage and answer questions. What does the crank-connecting rod mechanism consist of? What's the function of the crank-connecting rod mechanism?">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Discuss with your partner about the following passage and answer questions.">🔊</button><div class="en-line annotate">Discuss with your partner about the following passage and answer questions.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="What does the crank-connecting rod mechanism consist of?">🔊</button><div class="en-line annotate">What does the crank-connecting rod mechanism consist of?</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="What's the function of the crank-connecting rod mechanism?">🔊</button><div class="en-line annotate">What's the function of the crank-connecting rod mechanism?</div></div></div>
+<div class="reading-chinese">阅读下面的内容并和同伴讨论：曲柄连杆机构由什么组成？它的功能是什么？</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">02</div>
+<div class="reading-title">Introduction</div>
+<button class="play-para" data-speak="Crank-connecting rod mechanism is the engine mechanism that achieves thermal energy and mechanical energy conversion, and is used to transmit force and change movement. Its main function is to turn the gas force on the piston into crankshaft rotation torque, so that the crankshaft rotates and moves outward. The crank-connecting rod mechanism consists of three parts: engine block group, piston and connecting rod group, and crankshaft and flywheel group.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Crank-connecting rod mechanism is the engine mechanism that achieves thermal energy and mechanical energy conversion, and is used to transmit force and change movement.">🔊</button><div class="en-line annotate">Crank-connecting rod mechanism is the engine mechanism that achieves thermal energy and mechanical energy conversion, and is used to transmit force and change movement.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Its main function is to turn the gas force on the piston into crankshaft rotation torque, so that the crankshaft rotates and moves outward.">🔊</button><div class="en-line annotate">Its main function is to turn the gas force on the piston into crankshaft rotation torque, so that the crankshaft rotates and moves outward.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The crank-connecting rod mechanism consists of three parts: engine block group, piston and connecting rod group, and crankshaft and flywheel group.">🔊</button><div class="en-line annotate">The crank-connecting rod mechanism consists of three parts: engine block group, piston and connecting rod group, and crankshaft and flywheel group.</div></div></div>
+<div class="reading-chinese">曲柄连杆机构是发动机中实现热能与机械能转换的重要机构，它负责传递力并改变运动形式。它的主要作用是把气体作用在活塞上的力转化为曲轴旋转所需的转矩，从而使曲轴持续旋转。课文把它分成三大部分：机体组、活塞连杆组以及曲轴飞轮组。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">03</div>
+<div class="reading-title">2.2.1 Engine Block Group</div>
+<button class="play-para" data-speak="Engine block group includes cylinder block, crankcase, cylinder head, cylinder liner, cylinder gasket, and oil pan.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Engine block group includes cylinder block, crankcase, cylinder head, cylinder liner, cylinder gasket, and oil pan.">🔊</button><div class="en-line annotate">Engine block group includes cylinder block, crankcase, cylinder head, cylinder liner, cylinder gasket, and oil pan.</div></div></div>
+<div class="reading-chinese">机体组包括气缸体、曲轴箱、气缸盖、气缸套、气缸垫片和油底壳。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">04</div>
+<div class="reading-title">Cylinder Block</div>
+<button class="play-para" data-speak="The cylinder block is the supporting structure to which all other engine parts are attached. It is usually made of iron alloy or aluminum alloy. The cylinders guide the pistons and the lifter bores guide the lifters. The block houses the crankshaft. The block is heavily constructed, and such strength is necessary in maintaining correct alignment of all engine parts. Cooling and lubricating passages are provided in the block; the lower part of the block is the upper part of the crankcase.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The cylinder block is the supporting structure to which all other engine parts are attached.">🔊</button><div class="en-line annotate">The cylinder block is the supporting structure to which all other engine parts are attached.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="It is usually made of iron alloy or aluminum alloy.">🔊</button><div class="en-line annotate">It is usually made of iron alloy or aluminum alloy.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The cylinders guide the pistons and the lifter bores guide the lifters.">🔊</button><div class="en-line annotate">The cylinders guide the pistons and the lifter bores guide the lifters.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The block houses the crankshaft.">🔊</button><div class="en-line annotate">The block houses the crankshaft.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The block is heavily constructed, and such strength is necessary in maintaining correct alignment of all engine parts.">🔊</button><div class="en-line annotate">The block is heavily constructed, and such strength is necessary in maintaining correct alignment of all engine parts.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Cooling and lubricating passages are provided in the block; the lower part of the block is the upper part of the crankcase.">🔊</button><div class="en-line annotate">Cooling and lubricating passages are provided in the block; the lower part of the block is the upper part of the crankcase.</div></div></div>
+<div class="reading-chinese">气缸体是发动机的基础支撑结构，其他许多零部件都安装在它上面。它通常由铁合金或铝合金制成。气缸体中的气缸用于引导活塞运动，挺柱孔用于引导挺柱，曲轴也安装在机体内部。由于它要保证各零件保持正确的装配位置，所以必须具有足够的强度。此外，机体内部还布置有冷却和润滑通道，它的下部同时构成曲轴箱的上部。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">05</div>
+<div class="reading-title">Cylinder Liner</div>
+<button class="play-para" data-speak="A cylinder liner is a cylindrical part to be fitted into an engine block to form a cylinder. This is called cylinder liner in Japan, but some countries call this cylinder sleeve. It is one of the most important functional parts that make up the interior of an engine. The cylinder liner, serving as the inner wall of a cylinder, forms a sliding surface for the piston rings while retaining the lubricant within. The cylinder liner receives combustion heat through the piston and piston rings and transmits the heat to the coolant.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A cylinder liner is a cylindrical part to be fitted into an engine block to form a cylinder.">🔊</button><div class="en-line annotate">A cylinder liner is a cylindrical part to be fitted into an engine block to form a cylinder.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This is called cylinder liner in Japan, but some countries call this cylinder sleeve.">🔊</button><div class="en-line annotate">This is called cylinder liner in Japan, but some countries call this cylinder sleeve.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="It is one of the most important functional parts that make up the interior of an engine.">🔊</button><div class="en-line annotate">It is one of the most important functional parts that make up the interior of an engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The cylinder liner, serving as the inner wall of a cylinder, forms a sliding surface for the piston rings while retaining the lubricant within.">🔊</button><div class="en-line annotate">The cylinder liner, serving as the inner wall of a cylinder, forms a sliding surface for the piston rings while retaining the lubricant within.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The cylinder liner receives combustion heat through the piston and piston rings and transmits the heat to the coolant.">🔊</button><div class="en-line annotate">The cylinder liner receives combustion heat through the piston and piston rings and transmits the heat to the coolant.</div></div></div>
+<div class="reading-chinese">气缸套是装入发动机缸体内部并形成气缸的一种圆筒形零件。有些国家也把它叫作 cylinder sleeve。它是发动机内部非常重要的功能件之一。气缸套作为气缸内壁，不仅为活塞环提供滑动表面，还要把润滑油保持在适当范围内；同时，它还通过活塞和活塞环吸收燃烧热，并把热量传给冷却液。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">06</div>
+<div class="reading-title">Cylinder Gasket</div>
+<button class="play-para" data-speak="A head gasket is a gasket that sits between the engine block and cylinder head in an internal combustion engine. Its purpose is to seal the cylinders to ensure maximum compression and avoid leakage of coolant or engine oil into the cylinders. As such, it is the most critical sealing application in any engine, and as part of the combustion chamber, it shares the same strength requirements as other combustion chamber components.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A head gasket is a gasket that sits between the engine block and cylinder head in an internal combustion engine.">🔊</button><div class="en-line annotate">A head gasket is a gasket that sits between the engine block and cylinder head in an internal combustion engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Its purpose is to seal the cylinders to ensure maximum compression and avoid leakage of coolant or engine oil into the cylinders.">🔊</button><div class="en-line annotate">Its purpose is to seal the cylinders to ensure maximum compression and avoid leakage of coolant or engine oil into the cylinders.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="As such, it is the most critical sealing application in any engine, and as part of the combustion chamber, it shares the same strength requirements as other combustion chamber components.">🔊</button><div class="en-line annotate">As such, it is the most critical sealing application in any engine, and as part of the combustion chamber, it shares the same strength requirements as other combustion chamber components.</div></div></div>
+<div class="reading-chinese">气缸垫安装在发动机缸体和气缸盖之间。它的作用是密封气缸，保证足够的压缩压力，同时防止冷却液或机油泄漏到气缸内部。因此，它是发动机中极其关键的密封部件，而且作为燃烧室的一部分，它在强度要求上也必须与其他燃烧室部件保持一致。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">07</div>
+<div class="reading-title">Cylinder Head</div>
+<button class="play-para" data-speak="The cylinder head is a complex box part. Intake and exhaust port holes, valve guide holes, spark plug holes for gasoline engines, or injector holes for diesel engines are processed on it. The cylinder head is fastened to the top of the block, just as a roof fits over a house. The underside forms the combustion chamber with the top of the piston.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The cylinder head is a complex box part.">🔊</button><div class="en-line annotate">The cylinder head is a complex box part.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Intake and exhaust port holes, valve guide holes, spark plug holes for gasoline engines, or injector holes for diesel engines are processed on it.">🔊</button><div class="en-line annotate">Intake and exhaust port holes, valve guide holes, spark plug holes for gasoline engines, or injector holes for diesel engines are processed on it.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The cylinder head is fastened to the top of the block, just as a roof fits over a house.">🔊</button><div class="en-line annotate">The cylinder head is fastened to the top of the block, just as a roof fits over a house.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The underside forms the combustion chamber with the top of the piston.">🔊</button><div class="en-line annotate">The underside forms the combustion chamber with the top of the piston.</div></div></div>
+<div class="reading-chinese">气缸盖是一个结构复杂的箱体件。其上加工有进排气道孔、气门导管孔，以及汽油机的火花塞安装孔或柴油机的喷油器安装孔。气缸盖固定在缸体上方，就像房屋的屋顶一样；它的下表面与活塞顶部共同形成燃烧室。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">08</div>
+<div class="reading-title">2.2.2 Piston and Connecting Rod Group</div>
+<button class="play-para" data-speak="Piston and connecting rod group is composed of piston, piston ring, piston pin, connecting rod and related parts.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Piston and connecting rod group is composed of piston, piston ring, piston pin, connecting rod and related parts.">🔊</button><div class="en-line annotate">Piston and connecting rod group is composed of piston, piston ring, piston pin, connecting rod and related parts.</div></div></div>
+<div class="reading-chinese">活塞连杆组主要由活塞、活塞环、活塞销、连杆以及相关零件组成。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">09</div>
+<div class="reading-title">Pistons</div>
+<button class="play-para" data-speak="Most gasoline engines are equipped with aluminum alloy pistons. The piston is a cylindrical shaped hollow part that moves up and down inside the engine cylinder. The piston is composed of piston head, piston land, piston skirt and piston pin bore.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Most gasoline engines are equipped with aluminum alloy pistons.">🔊</button><div class="en-line annotate">Most gasoline engines are equipped with aluminum alloy pistons.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The piston is a cylindrical shaped hollow part that moves up and down inside the engine cylinder.">🔊</button><div class="en-line annotate">The piston is a cylindrical shaped hollow part that moves up and down inside the engine cylinder.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The piston is composed of piston head, piston land, piston skirt and piston pin bore.">🔊</button><div class="en-line annotate">The piston is composed of piston head, piston land, piston skirt and piston pin bore.</div></div></div>
+<div class="reading-chinese">大多数汽油机都采用铝合金活塞。活塞是一个在气缸内上下运动的中空圆柱形零件，主要由活塞顶、活塞环岸、活塞裙部和活塞销孔等部分构成。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">10</div>
+<div class="reading-title">Piston Head, Land, and Skirt</div>
+<button class="play-para" data-speak="Piston head may have various top designs such as flat, concave, and convex, or any one of a great variety of shapes to match the combustion chamber design in the cylinder head. Piston ring grooves are cut into the sides of the piston just below the piston head. The lower grooves often have holes or slots in the bottom of the groove to permit oil drainage from behind the rings. The piston lands are parts of piston between the ring grooves. The lands provide a sealing surface for the sides of piston rings. Piston skirt forms a bearing area in contact with the cylinder wall. It is the area from the lower ring to the bottom of the piston.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Piston head may have various top designs such as flat, concave, and convex, or any one of a great variety of shapes to match the combustion chamber design in the cylinder head.">🔊</button><div class="en-line annotate">Piston head may have various top designs such as flat, concave, and convex, or any one of a great variety of shapes to match the combustion chamber design in the cylinder head.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Piston ring grooves are cut into the sides of the piston just below the piston head.">🔊</button><div class="en-line annotate">Piston ring grooves are cut into the sides of the piston just below the piston head.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The lower grooves often have holes or slots in the bottom of the groove to permit oil drainage from behind the rings.">🔊</button><div class="en-line annotate">The lower grooves often have holes or slots in the bottom of the groove to permit oil drainage from behind the rings.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The piston lands are parts of piston between the ring grooves.">🔊</button><div class="en-line annotate">The piston lands are parts of piston between the ring grooves.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The lands provide a sealing surface for the sides of piston rings.">🔊</button><div class="en-line annotate">The lands provide a sealing surface for the sides of piston rings.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Piston skirt forms a bearing area in contact with the cylinder wall.">🔊</button><div class="en-line annotate">Piston skirt forms a bearing area in contact with the cylinder wall.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="It is the area from the lower ring to the bottom of the piston.">🔊</button><div class="en-line annotate">It is the area from the lower ring to the bottom of the piston.</div></div></div>
+<div class="reading-chinese">活塞顶部可以设计成平顶、凹顶、凸顶等多种形状，以适配气缸盖中的燃烧室结构。活塞头部下方的侧面开有活塞环槽，较低位置的环槽底部通常设有孔或槽，以便把活塞环后方多余的机油排走。活塞环岸是各环槽之间的部分，为活塞环侧面提供密封表面。活塞裙部则与气缸壁接触，形成承压区域，其范围从最下方活塞环以下一直延伸到活塞底部。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">11</div>
+<div class="reading-title">Piston Pins</div>
+<button class="play-para" data-speak="Piston pins are manufactured from hard steel. One of the most common methods of mounting the pin in the piston and connecting rod is to press the pin into the rod and allow it to rotate in the piston with a precise clearance.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Piston pins are manufactured from hard steel.">🔊</button><div class="en-line annotate">Piston pins are manufactured from hard steel.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="One of the most common methods of mounting the pin in the piston and connecting rod is to press the pin into the rod and allow it to rotate in the piston with a precise clearance.">🔊</button><div class="en-line annotate">One of the most common methods of mounting the pin in the piston and connecting rod is to press the pin into the rod and allow it to rotate in the piston with a precise clearance.</div></div></div>
+<div class="reading-chinese">活塞销一般由硬钢制成。常见的装配方式之一是把活塞销压入连杆，并让它在活塞中以精确的配合间隙进行转动。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">12</div>
+<div class="reading-title">Piston Rings</div>
+<button class="play-para" data-speak="The piston rings fit into the piston ring grooves and provide seals between the piston and the cylinder walls. Piston rings may be classified as compression rings and oil rings. Many pistons have two compression rings in the upper ring grooves and one oil ring in the lower groove. The compression rings prevent compression leakage. The oil rings scrape the oil from the cylinder walls, and the excess oil flows into the oil pan.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The piston rings fit into the piston ring grooves and provide seals between the piston and the cylinder walls.">🔊</button><div class="en-line annotate">The piston rings fit into the piston ring grooves and provide seals between the piston and the cylinder walls.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Piston rings may be classified as compression rings and oil rings.">🔊</button><div class="en-line annotate">Piston rings may be classified as compression rings and oil rings.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Many pistons have two compression rings in the upper ring grooves and one oil ring in the lower groove.">🔊</button><div class="en-line annotate">Many pistons have two compression rings in the upper ring grooves and one oil ring in the lower groove.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The compression rings prevent compression leakage.">🔊</button><div class="en-line annotate">The compression rings prevent compression leakage.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The oil rings scrape the oil from the cylinder walls, and the excess oil flows into the oil pan.">🔊</button><div class="en-line annotate">The oil rings scrape the oil from the cylinder walls, and the excess oil flows into the oil pan.</div></div></div>
+<div class="reading-chinese">活塞环安装在活塞环槽中，在活塞与气缸壁之间起密封作用。活塞环可分为压缩环和油环。许多活塞在上部环槽中装有两道压缩环，在下部环槽中装有一道油环。压缩环的作用是防止气缸漏气，而油环负责刮除气缸壁上多余的机油，并让多余机油回流到油底壳。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">13</div>
+<div class="reading-title">Connecting Rods</div>
+<button class="play-para" data-speak="Many connecting rods are steel-forged. The connecting rod is attached to the crankshaft at one end and to the piston at the other end. It is composed of connecting rod small end, connecting rod shank, connecting rod big end, connecting rod cap, and connecting rod bearing half shells.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Many connecting rods are steel-forged.">🔊</button><div class="en-line annotate">Many connecting rods are steel-forged.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The connecting rod is attached to the crankshaft at one end and to the piston at the other end.">🔊</button><div class="en-line annotate">The connecting rod is attached to the crankshaft at one end and to the piston at the other end.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="It is composed of connecting rod small end, connecting rod shank, connecting rod big end, connecting rod cap, and connecting rod bearing half shells.">🔊</button><div class="en-line annotate">It is composed of connecting rod small end, connecting rod shank, connecting rod big end, connecting rod cap, and connecting rod bearing half shells.</div></div></div>
+<div class="reading-chinese">许多连杆采用钢锻件制造。连杆一端连接曲轴，另一端连接活塞。它通常由小头、杆身、大头、连杆盖以及连杆轴承半瓦等部分组成。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">14</div>
+<div class="reading-title">2.2.3 Crankshaft and Flywheel Group</div>
+<button class="play-para" data-speak="Crankshaft and flywheel group comprises crankshaft, crankshaft bearing, and flywheel.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Crankshaft and flywheel group comprises crankshaft, crankshaft bearing, and flywheel.">🔊</button><div class="en-line annotate">Crankshaft and flywheel group comprises crankshaft, crankshaft bearing, and flywheel.</div></div></div>
+<div class="reading-chinese">曲轴飞轮组主要由曲轴、曲轴轴承和飞轮组成。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">15</div>
+<div class="reading-title">Crankshaft</div>
+<button class="play-para" data-speak="The crankshaft serves to change the reciprocating motion of the piston into rotary motion and handles the entire power output. The crankshaft therefore must be adequately strong and wear-resistant. The crankshaft is actually made up of various parts such as crankshaft front end, main bearing journals, crank arm, bearing, counterbalance weight and flywheel end. Crankshafts have finely drilled oil passages through which oil can flow from the main bearings to the connecting rod bearings. The crankshaft front end carries three devices: the gear or sprocket that drives the camshaft, the vibration damper, and the belt pulley. The pulley drives the engine water pump and generator.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The crankshaft serves to change the reciprocating motion of the piston into rotary motion and handles the entire power output.">🔊</button><div class="en-line annotate">The crankshaft serves to change the reciprocating motion of the piston into rotary motion and handles the entire power output.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The crankshaft therefore must be adequately strong and wear-resistant.">🔊</button><div class="en-line annotate">The crankshaft therefore must be adequately strong and wear-resistant.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The crankshaft is actually made up of various parts such as crankshaft front end, main bearing journals, crank arm, bearing, counterbalance weight and flywheel end.">🔊</button><div class="en-line annotate">The crankshaft is actually made up of various parts such as crankshaft front end, main bearing journals, crank arm, bearing, counterbalance weight and flywheel end.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Crankshafts have finely drilled oil passages through which oil can flow from the main bearings to the connecting rod bearings.">🔊</button><div class="en-line annotate">Crankshafts have finely drilled oil passages through which oil can flow from the main bearings to the connecting rod bearings.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The crankshaft front end carries three devices: the gear or sprocket that drives the camshaft, the vibration damper, and the belt pulley.">🔊</button><div class="en-line annotate">The crankshaft front end carries three devices: the gear or sprocket that drives the camshaft, the vibration damper, and the belt pulley.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The pulley drives the engine water pump and generator.">🔊</button><div class="en-line annotate">The pulley drives the engine water pump and generator.</div></div></div>
+<div class="reading-chinese">曲轴的作用是把活塞的往复运动转变为旋转运动，并承担发动机全部动力输出。因此，曲轴必须足够坚固并且耐磨。曲轴由前端、主轴颈、曲柄臂、曲柄销、平衡块和飞轮端等部分组成。其内部还钻有精细的润滑油道，使机油能够从主轴承流向连杆轴承。曲轴前端安装有驱动凸轮轴的齿轮或链轮、减振器以及皮带轮，而皮带轮又会带动发动机水泵和发电机。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">16</div>
+<div class="reading-title">Flywheel</div>
+<button class="play-para" data-speak="The flywheel is a comparatively heavy wheel bolted to the rear end of the crankshaft. Its function is to help the engine run smoothly by absorbing some of the energy during the power stroke and releasing it during the other strokes. Thus, the inertia of the flywheel tends to keep it turning at constant speed. On the front face of the flywheel, there are marks and indentations used for setting the valve and ignition systems relative to prescribed positions of the crankshaft.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The flywheel is a comparatively heavy wheel bolted to the rear end of the crankshaft.">🔊</button><div class="en-line annotate">The flywheel is a comparatively heavy wheel bolted to the rear end of the crankshaft.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Its function is to help the engine run smoothly by absorbing some of the energy during the power stroke and releasing it during the other strokes.">🔊</button><div class="en-line annotate">Its function is to help the engine run smoothly by absorbing some of the energy during the power stroke and releasing it during the other strokes.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Thus, the inertia of the flywheel tends to keep it turning at constant speed.">🔊</button><div class="en-line annotate">Thus, the inertia of the flywheel tends to keep it turning at constant speed.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="On the front face of the flywheel, there are marks and indentations used for setting the valve and ignition systems relative to prescribed positions of the crankshaft.">🔊</button><div class="en-line annotate">On the front face of the flywheel, there are marks and indentations used for setting the valve and ignition systems relative to prescribed positions of the crankshaft.</div></div></div>
+<div class="reading-chinese">飞轮是用螺栓固定在曲轴后端的一只较重的轮盘。它的作用是在做功冲程中吸收一部分能量，并在其他冲程中释放出来，从而帮助发动机运转更加平稳。也就是说，飞轮的惯性有助于保持曲轴转速稳定。飞轮前表面还刻有用于配气系统和点火系统校正的标记和凹槽，以便与曲轴规定位置相对应。</div>
+</div>
+</div>
+</details>
+<details class="chapter-detail" id="s23">
+<summary>
+<span>2.3 The Valve Train</span>
+<span class="summary-sub">重点看配气机构的组成、传动链条、间隙控制与正时配合。</span>
+</summary>
+<div class="chapter-body">
+<div class="reading-tip">默认先看图式精读；需要逐段精讲时，再展开下面的原文双语阅读卡。英文在上，中文译文在下；中文字号更小，便于学生把注意力放在英文上。</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">01</div>
+<div class="reading-title">Warm-up</div>
+<button class="play-para" data-speak="Discuss with your partner about the following passage and picture, and answer questions. What does the valve train consist of? What's the function of the valve train?">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Discuss with your partner about the following passage and picture, and answer questions.">🔊</button><div class="en-line annotate">Discuss with your partner about the following passage and picture, and answer questions.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="What does the valve train consist of?">🔊</button><div class="en-line annotate">What does the valve train consist of?</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="What's the function of the valve train?">🔊</button><div class="en-line annotate">What's the function of the valve train?</div></div></div>
+<div class="reading-chinese">阅读课文并结合图片讨论：配气机构由什么组成？它的功能是什么？</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">02</div>
+<div class="reading-title">Introduction</div>
+<button class="play-para" data-speak="The valve train is a mechanical system that controls operation of the valves in an internal combustion engine. To coordinate the four-stroke cycle, the valve train opens and closes the valves respectively. These valve movements must take place at exactly the right moments. The opening of each valve is controlled by a camshaft. The valve train consists of exhaust valve, intake valve, rocker arms, push rods, lifters, camshaft, camshaft actuator, timing chain and so on.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The valve train is a mechanical system that controls operation of the valves in an internal combustion engine.">🔊</button><div class="en-line annotate">The valve train is a mechanical system that controls operation of the valves in an internal combustion engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="To coordinate the four-stroke cycle, the valve train opens and closes the valves respectively.">🔊</button><div class="en-line annotate">To coordinate the four-stroke cycle, the valve train opens and closes the valves respectively.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="These valve movements must take place at exactly the right moments.">🔊</button><div class="en-line annotate">These valve movements must take place at exactly the right moments.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The opening of each valve is controlled by a camshaft.">🔊</button><div class="en-line annotate">The opening of each valve is controlled by a camshaft.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The valve train consists of exhaust valve, intake valve, rocker arms, push rods, lifters, camshaft, camshaft actuator, timing chain and so on.">🔊</button><div class="en-line annotate">The valve train consists of exhaust valve, intake valve, rocker arms, push rods, lifters, camshaft, camshaft actuator, timing chain and so on.</div></div></div>
+<div class="reading-chinese">配气机构是内燃机中控制气门工作的机械系统。为了配合四冲程循环，它必须按照准确的时刻开启和关闭进排气门。每个气门的开启都受凸轮轴控制。课文列出的主要部件包括排气门、进气门、摇臂、推杆、挺柱、凸轮轴、凸轮轴执行机构以及正时链条等。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">03</div>
+<div class="reading-title">Valve Assembly</div>
+<button class="play-para" data-speak="A valve assembly is a complete valve mechanism including valve, spring, spring retainer, valve locks and valve guide seal.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A valve assembly is a complete valve mechanism including valve, spring, spring retainer, valve locks and valve guide seal.">🔊</button><div class="en-line annotate">A valve assembly is a complete valve mechanism including valve, spring, spring retainer, valve locks and valve guide seal.</div></div></div>
+<div class="reading-chinese">一个完整的气门总成通常包括气门、气门弹簧、弹簧座、锁夹以及气门导管油封等部件。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">04</div>
+<div class="reading-title">Exhaust Valve and Intake Valve</div>
+<button class="play-para" data-speak="Valves are usually made from a steel alloy. Exhaust valves must withstand extremely high temperatures. The valve face must seat evenly against the valve seat in the cylinder head to prevent leaks from the cylinder during the compression and power strokes.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Valves are usually made from a steel alloy.">🔊</button><div class="en-line annotate">Valves are usually made from a steel alloy.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Exhaust valves must withstand extremely high temperatures.">🔊</button><div class="en-line annotate">Exhaust valves must withstand extremely high temperatures.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The valve face must seat evenly against the valve seat in the cylinder head to prevent leaks from the cylinder during the compression and power strokes.">🔊</button><div class="en-line annotate">The valve face must seat evenly against the valve seat in the cylinder head to prevent leaks from the cylinder during the compression and power strokes.</div></div></div>
+<div class="reading-chinese">气门通常由合金钢制成，其中排气门必须能够承受极高的温度。气门面必须与气缸盖上的气门座均匀贴合，这样在压缩冲程和做功冲程中才能防止气缸漏气。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">05</div>
+<div class="reading-title">Valve Spring</div>
+<button class="play-para" data-speak="Poppet valves typically require small coil springs, appropriately named valve springs, to keep them closed when not actuated by the camshaft. They are attached to the valve stem ends, seating within spring retainers.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Poppet valves typically require small coil springs, appropriately named valve springs, to keep them closed when not actuated by the camshaft.">🔊</button><div class="en-line annotate">Poppet valves typically require small coil springs, appropriately named valve springs, to keep them closed when not actuated by the camshaft.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="They are attached to the valve stem ends, seating within spring retainers.">🔊</button><div class="en-line annotate">They are attached to the valve stem ends, seating within spring retainers.</div></div></div>
+<div class="reading-chinese">提升式气门通常需要小型螺旋弹簧，也就是气门弹簧，在没有受到凸轮轴驱动时保持关闭状态。弹簧安装在气门杆末端，并安置在弹簧座中。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">06</div>
+<div class="reading-title">Valve Drive Group</div>
+<button class="play-para" data-speak="The camshaft pushes on the lifter, which pushes on the pushrod, which pushes on the rocker arm, which rotates and pushes down on the valve. The camshaft is located above the valves within the cylinder head, and operates directly on the valve lifter.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The camshaft pushes on the lifter, which pushes on the pushrod, which pushes on the rocker arm, which rotates and pushes down on the valve.">🔊</button><div class="en-line annotate">The camshaft pushes on the lifter, which pushes on the pushrod, which pushes on the rocker arm, which rotates and pushes down on the valve.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The camshaft is located above the valves within the cylinder head, and operates directly on the valve lifter.">🔊</button><div class="en-line annotate">The camshaft is located above the valves within the cylinder head, and operates directly on the valve lifter.</div></div></div>
+<div class="reading-chinese">气门传动组的工作链条是：凸轮轴推动挺柱，挺柱推动推杆，推杆推动摇臂，摇臂旋转后再向下压动气门。课文中强调，凸轮轴位于气缸盖中的气门上方，并且直接作用于气门挺柱。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">07</div>
+<div class="reading-title">Camshaft</div>
+<button class="play-para" data-speak="While today some engines rely on a single camshaft per cylinder, which is known as a single overhead camshaft (SOHC), most modern engines are driven by two camshafts per cylinder head, one camshaft for the intake valves and another for the exhaust valves, which is known as a double or dual overhead cam (DOHC).">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="While today some engines rely on a single camshaft per cylinder, which is known as a single overhead camshaft (SOHC), most modern engines are driven by two camshafts per cylinder head, one camshaft for the intake valves and another for the exhaust valves, which is known as a double or dual overhead cam (DOHC).">🔊</button><div class="en-line annotate">While today some engines rely on a single camshaft per cylinder, which is known as a single overhead camshaft (SOHC), most modern engines are driven by two camshafts per cylinder head, one camshaft for the intake valves and another for the exhaust valves, which is known as a double or dual overhead cam (DOHC).</div></div></div>
+<div class="reading-chinese">有些发动机采用单顶置凸轮轴，即 SOHC；而大多数现代发动机采用双顶置凸轮轴，即 DOHC，其中一根凸轮轴控制进气门，另一根控制排气门。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">08</div>
+<div class="reading-title">Cam Lobes</div>
+<button class="play-para" data-speak="The key parts of any camshaft are the lobes. As the camshaft spins, the lobes open and close the intake and exhaust valves in time with the motion of the piston. There is a direct relationship between the shape of the cam lobes and the way the engine performs in different speed ranges.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The key parts of any camshaft are the lobes.">🔊</button><div class="en-line annotate">The key parts of any camshaft are the lobes.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="As the camshaft spins, the lobes open and close the intake and exhaust valves in time with the motion of the piston.">🔊</button><div class="en-line annotate">As the camshaft spins, the lobes open and close the intake and exhaust valves in time with the motion of the piston.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="There is a direct relationship between the shape of the cam lobes and the way the engine performs in different speed ranges.">🔊</button><div class="en-line annotate">There is a direct relationship between the shape of the cam lobes and the way the engine performs in different speed ranges.</div></div></div>
+<div class="reading-chinese">任何凸轮轴的关键部分都是凸轮凸角。随着凸轮轴旋转，这些凸角会配合活塞运动的节奏，控制进排气门开启和关闭。凸轮形状与发动机在不同转速范围内的性能表现有直接关系。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">09</div>
+<div class="reading-title">Pushrod</div>
+<button class="play-para" data-speak="Pushrods are long, slender metal rods seated within the engine block. A push rod is a part of an internal combustion engine that rests on the top of a valve lifter and goes up into the rocker arm. As the lifter follows the cam lobe, the push rod actuates the rocker arm and moves the valve, opening and closing it to allow fuel and air in and exhaust out of the combustion chamber.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Pushrods are long, slender metal rods seated within the engine block.">🔊</button><div class="en-line annotate">Pushrods are long, slender metal rods seated within the engine block.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A push rod is a part of an internal combustion engine that rests on the top of a valve lifter and goes up into the rocker arm.">🔊</button><div class="en-line annotate">A push rod is a part of an internal combustion engine that rests on the top of a valve lifter and goes up into the rocker arm.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="As the lifter follows the cam lobe, the push rod actuates the rocker arm and moves the valve, opening and closing it to allow fuel and air in and exhaust out of the combustion chamber.">🔊</button><div class="en-line annotate">As the lifter follows the cam lobe, the push rod actuates the rocker arm and moves the valve, opening and closing it to allow fuel and air in and exhaust out of the combustion chamber.</div></div></div>
+<div class="reading-chinese">推杆是安装在发动机缸体内的细长金属杆件。它下端支承在挺柱上，上端伸入摇臂。当挺柱跟随凸轮运动时，推杆便会推动摇臂，从而带动气门启闭，使可燃混合气或空气进入燃烧室，并让废气排出。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">10</div>
+<div class="reading-title">Valve Lifter</div>
+<button class="play-para" data-speak="At the bottom ends, the pushrods are fitted with lifters, either solid or hydraulic, upon which the camshaft, located within the cylinder block, makes contact. A hydraulic valve lifter is a device for maintaining zero valve clearance in an internal combustion engine. Solid valve lifters require regular adjusting to maintain a small clearance between the valve and its rocker or cam follower. This space prevents the parts from binding as they expand with the engine's heat, but can also lead to noisy operation and increased wear as the parts rattle against one another until they reach operating temperature.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="At the bottom ends, the pushrods are fitted with lifters, either solid or hydraulic, upon which the camshaft, located within the cylinder block, makes contact.">🔊</button><div class="en-line annotate">At the bottom ends, the pushrods are fitted with lifters, either solid or hydraulic, upon which the camshaft, located within the cylinder block, makes contact.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="A hydraulic valve lifter is a device for maintaining zero valve clearance in an internal combustion engine.">🔊</button><div class="en-line annotate">A hydraulic valve lifter is a device for maintaining zero valve clearance in an internal combustion engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Solid valve lifters require regular adjusting to maintain a small clearance between the valve and its rocker or cam follower.">🔊</button><div class="en-line annotate">Solid valve lifters require regular adjusting to maintain a small clearance between the valve and its rocker or cam follower.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This space prevents the parts from binding as they expand with the engine's heat, but can also lead to noisy operation and increased wear as the parts rattle against one another until they reach operating temperature.">🔊</button><div class="en-line annotate">This space prevents the parts from binding as they expand with the engine's heat, but can also lead to noisy operation and increased wear as the parts rattle against one another until they reach operating temperature.</div></div></div>
+<div class="reading-chinese">推杆下端装有挺柱，挺柱可以是机械式的，也可以是液压式的，位于缸体内部的凸轮轴会与它接触。液压挺柱能够自动保持零气门间隙；而机械挺柱则需要定期调整，以保证气门与摇臂或从动件之间留有适当的小间隙。这个间隙可以防止零件受热膨胀后卡死，但也可能在发动机尚未达到正常工作温度前产生噪声和磨损。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">11</div>
+<div class="reading-title">Valve Clearance</div>
+<button class="play-para" data-speak="When the engine runs in the compression stroke and power stroke, the valves must close tightly on their seats to produce a gas-tight seal and thus prevent gases escaping from the combustion chamber. If the valves do not close fully, the engine will not develop full power. Also, the valve heads will be liable to be burnt by the passing hot gases, and there is the likelihood of the piston crown touching an open valve, which can seriously damage the engine. So that the valves can close fully, some clearance is needed in the operating mechanism. This means that the operating mechanism must be able to move sufficiently far enough away from the valve to allow the valves to be fully closed against their seats by the valve spring. However, if the clearance is set too great, this will cause a light metallic tapping noise.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="When the engine runs in the compression stroke and power stroke, the valves must close tightly on their seats to produce a gas-tight seal and thus prevent gases escaping from the combustion chamber.">🔊</button><div class="en-line annotate">When the engine runs in the compression stroke and power stroke, the valves must close tightly on their seats to produce a gas-tight seal and thus prevent gases escaping from the combustion chamber.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="If the valves do not close fully, the engine will not develop full power.">🔊</button><div class="en-line annotate">If the valves do not close fully, the engine will not develop full power.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Also, the valve heads will be liable to be burnt by the passing hot gases, and there is the likelihood of the piston crown touching an open valve, which can seriously damage the engine.">🔊</button><div class="en-line annotate">Also, the valve heads will be liable to be burnt by the passing hot gases, and there is the likelihood of the piston crown touching an open valve, which can seriously damage the engine.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="So that the valves can close fully, some clearance is needed in the operating mechanism.">🔊</button><div class="en-line annotate">So that the valves can close fully, some clearance is needed in the operating mechanism.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This means that the operating mechanism must be able to move sufficiently far enough away from the valve to allow the valves to be fully closed against their seats by the valve spring.">🔊</button><div class="en-line annotate">This means that the operating mechanism must be able to move sufficiently far enough away from the valve to allow the valves to be fully closed against their seats by the valve spring.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="However, if the clearance is set too great, this will cause a light metallic tapping noise.">🔊</button><div class="en-line annotate">However, if the clearance is set too great, this will cause a light metallic tapping noise.</div></div></div>
+<div class="reading-chinese">在压缩冲程和做功冲程中，气门必须严密贴合在气门座上，形成气密封闭，防止燃烧室中的气体泄漏。如果气门关闭不严，发动机就无法输出全部功率；同时，气门头可能会被高温气体烧蚀，活塞顶部也有可能碰到未完全关闭的气门，从而造成严重损坏。正因为如此，配气机构中必须留有适当的气门间隙，让气门在弹簧作用下能够完全关闭。但如果间隙过大，又会产生轻微的金属敲击声。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">12</div>
+<div class="reading-title">Timing Belt, Chain and Gear</div>
+<button class="play-para" data-speak="Camshafts actuate the valves at the appropriate time in the combustion cycle. In order to accomplish this, the camshaft is linked to and kept in synchronisation with the crankshaft through the use of a metal chain, rubber belt, or gear. Because these mechanisms are essential to the proper timing of valve actuation, they are named timing chains, timing belts, and timing gears, respectively.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Camshafts actuate the valves at the appropriate time in the combustion cycle.">🔊</button><div class="en-line annotate">Camshafts actuate the valves at the appropriate time in the combustion cycle.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="In order to accomplish this, the camshaft is linked to and kept in synchronisation with the crankshaft through the use of a metal chain, rubber belt, or gear.">🔊</button><div class="en-line annotate">In order to accomplish this, the camshaft is linked to and kept in synchronisation with the crankshaft through the use of a metal chain, rubber belt, or gear.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Because these mechanisms are essential to the proper timing of valve actuation, they are named timing chains, timing belts, and timing gears, respectively.">🔊</button><div class="en-line annotate">Because these mechanisms are essential to the proper timing of valve actuation, they are named timing chains, timing belts, and timing gears, respectively.</div></div></div>
+<div class="reading-chinese">凸轮轴必须在燃烧循环的合适时刻驱动气门动作。为此，凸轮轴需要通过金属链条、橡胶皮带或齿轮与曲轴保持同步。正因为这些部件对气门动作正时至关重要，它们分别被称为正时链条、正时皮带和正时齿轮。</div>
+</div>
+<div class="reading-block">
+<div class="reading-head">
+<div class="reading-kicker">13</div>
+<div class="reading-title">Valve Overlap</div>
+<button class="play-para" data-speak="For a period, both of the valves are open. This period of time is known as valve overlap. The closing of the exhaust valve laps over the opening of the intake valve. During this time, the new mixture pushes the burned gases out the exhaust valve. Valve overlap is held to a minimum on turbo-charged engines. This prevents the intake charge from being blown out through the exhaust.">朗读本段</button>
+</div>
+<div class="reading-english"><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="For a period, both of the valves are open.">🔊</button><div class="en-line annotate">For a period, both of the valves are open.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This period of time is known as valve overlap.">🔊</button><div class="en-line annotate">This period of time is known as valve overlap.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="The closing of the exhaust valve laps over the opening of the intake valve.">🔊</button><div class="en-line annotate">The closing of the exhaust valve laps over the opening of the intake valve.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="During this time, the new mixture pushes the burned gases out the exhaust valve.">🔊</button><div class="en-line annotate">During this time, the new mixture pushes the burned gases out the exhaust valve.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="Valve overlap is held to a minimum on turbo-charged engines.">🔊</button><div class="en-line annotate">Valve overlap is held to a minimum on turbo-charged engines.</div></div><div class="line-row"><button aria-label="朗读本句" class="play-line" data-speak="This prevents the intake charge from being blown out through the exhaust.">🔊</button><div class="en-line annotate">This prevents the intake charge from being blown out through the exhaust.</div></div></div>
+<div class="reading-chinese">在某一小段时间内，进气门和排气门会同时开启，这段时间就叫作气门重叠。也就是说，排气门还未完全关闭时，进气门已经开始开启。此时，新鲜混合气会帮助把燃烧后的废气从排气门推出去。在涡轮增压发动机中，气门重叠通常会尽量减小，以防止新进入的气体直接从排气侧流失。</div>
+</div>
+</div>
+</details>
+</div>
+<aside class="glossary-live" id="glossaryLive">
+<h3>词汇注释卡</h3>
+<div class="glossary-help">现在页面里的英文词汇、短语和正文中的普通单词都可以点击。点击后，这里会显示中文释义、音标和朗读按钮；暂未单独收录的词，会给出句中参考。</div>
+<div class="term-name" id="liveTerm">engine assembly</div>
+<div class="term-phone" id="livePhone">/ˈendʒɪn əˈsembli/</div>
+<div class="term-zh" id="liveZh">发动机总成</div>
+<div class="term-type" id="liveType">示例词条</div>
+<button data-speak="engine assembly" id="liveSpeak">朗读当前词条</button>
+</aside>
+</div>
+</section>
+<div class="footer">© 2026 昆玉职业技术学院 基础教学部 李巧 · 双语互动精读版</div>
+</main>
+</div>
+</div>
+
+<script>
+const GLOSSARY = {"internal combustion engine": {"zh": "内燃机", "phonetic": "", "type": "phrase"}, "IC engine": {"zh": "内燃机", "phonetic": "", "type": "phrase"}, "petrol engine": {"zh": "汽油机", "phonetic": "", "type": "phrase"}, "spark-ignition engine": {"zh": "火花点火式发动机", "phonetic": "", "type": "phrase"}, "diesel engine": {"zh": "柴油机", "phonetic": "", "type": "phrase"}, "compression-ignition engine": {"zh": "压缩点火式发动机", "phonetic": "", "type": "phrase"}, "four-stroke cycle engine": {"zh": "四冲程发动机", "phonetic": "", "type": "phrase"}, "two-stroke cycle engine": {"zh": "二冲程发动机", "phonetic": "", "type": "phrase"}, "single-cylinder engine": {"zh": "单缸发动机", "phonetic": "", "type": "phrase"}, "multi-cylinder engine": {"zh": "多缸发动机", "phonetic": "", "type": "phrase"}, "inline-four engine": {"zh": "直列四缸发动机", "phonetic": "", "type": "phrase"}, "inline engine": {"zh": "直列式发动机", "phonetic": "", "type": "phrase"}, "V engine": {"zh": "V 型发动机", "phonetic": "", "type": "phrase"}, "W engine": {"zh": "W 型发动机", "phonetic": "", "type": "phrase"}, "horizontal engine": {"zh": "水平对置发动机", "phonetic": "", "type": "phrase"}, "naturally aspirated engine": {"zh": "自然吸气发动机", "phonetic": "", "type": "phrase"}, "supercharged engine": {"zh": "增压发动机", "phonetic": "", "type": "phrase"}, "turbocharger": {"zh": "蜗轮增压器", "phonetic": "/tsrboutjardgar/", "type": "word"}, "supercharger": {"zh": "增压器", "phonetic": "/'sjupo,tardg/", "type": "word"}, "intake": {"zh": "进气", "phonetic": "/'in,tek/", "type": "word"}, "compression": {"zh": "压缩", "phonetic": "/kom \"prefon/", "type": "word"}, "combustion": {"zh": "燃烧", "phonetic": "/kəm'bʌstʃən/", "type": "word"}, "exhaust": {"zh": "排气", "phonetic": "/rg'zɔst/", "type": "word"}, "top dead center": {"zh": "上止点", "phonetic": "", "type": "phrase"}, "bottom dead center": {"zh": "下止点", "phonetic": "", "type": "phrase"}, "TDC": {"zh": "上止点", "phonetic": "", "type": "word"}, "BDC": {"zh": "下止点", "phonetic": "", "type": "word"}, "intake valve": {"zh": "进气门", "phonetic": "", "type": "phrase"}, "exhaust valve": {"zh": "排气门", "phonetic": "", "type": "phrase"}, "air-fuel mixture": {"zh": "空气燃油混合气", "phonetic": "", "type": "phrase"}, "spark plug": {"zh": "火花塞", "phonetic": "", "type": "phrase"}, "fuel injector": {"zh": "喷油器", "phonetic": "", "type": "phrase"}, "combustion chamber": {"zh": "燃烧室", "phonetic": "", "type": "phrase"}, "crankshaft": {"zh": "曲轴", "phonetic": "/'krankfeeft/", "type": "word"}, "crank-connecting rod mechanism": {"zh": "曲柄连杆机构", "phonetic": "", "type": "phrase"}, "thermal energy": {"zh": "热能", "phonetic": "", "type": "phrase"}, "mechanical energy": {"zh": "机械能", "phonetic": "", "type": "phrase"}, "torque": {"zh": "(尤指机器的)扭转力；转(力)矩", "phonetic": "/tɔrk/", "type": "word"}, "engine block group": {"zh": "机体组", "phonetic": "", "type": "phrase"}, "cylinder block": {"zh": "气缸体", "phonetic": "", "type": "phrase"}, "crankcase": {"zh": "曲轴箱", "phonetic": "/'kræŋk,keis/", "type": "word"}, "cylinder head": {"zh": "气缸盖", "phonetic": "", "type": "phrase"}, "cylinder liner": {"zh": "气缸套", "phonetic": "", "type": "phrase"}, "cylinder sleeve": {"zh": "气缸套", "phonetic": "", "type": "phrase"}, "cylinder gasket": {"zh": "气缸垫片", "phonetic": "", "type": "phrase"}, "oil pan": {"zh": "油底壳", "phonetic": "", "type": "phrase"}, "piston": {"zh": "[ 机]活塞", "phonetic": "/piston/", "type": "word"}, "piston ring": {"zh": "活塞环", "phonetic": "", "type": "phrase"}, "piston pin": {"zh": "活塞销", "phonetic": "", "type": "phrase"}, "connecting rod": {"zh": "连杆", "phonetic": "", "type": "phrase"}, "piston head": {"zh": "活塞顶", "phonetic": "", "type": "phrase"}, "piston land": {"zh": "活塞环岸", "phonetic": "", "type": "phrase"}, "piston skirt": {"zh": "活塞裙部", "phonetic": "", "type": "phrase"}, "piston rings": {"zh": "活塞环", "phonetic": "", "type": "phrase"}, "compression rings": {"zh": "压缩环", "phonetic": "", "type": "phrase"}, "oil ring": {"zh": "油环", "phonetic": "", "type": "phrase"}, "flywheel": {"zh": "飞轮", "phonetic": "/'flar hwil,-.wil/", "type": "word"}, "main bearings": {"zh": "主轴承", "phonetic": "", "type": "phrase"}, "vibration damper": {"zh": "减振器", "phonetic": "", "type": "phrase"}, "belt pulley": {"zh": "皮带轮", "phonetic": "", "type": "phrase"}, "wear-resistant": {"zh": "抗磨损的，耐磨性", "phonetic": "", "type": "phrase"}, "valve train": {"zh": "配气机构", "phonetic": "", "type": "phrase"}, "rocker arm": {"zh": "摇臂", "phonetic": "", "type": "phrase"}, "rocker arms": {"zh": "摇臂", "phonetic": "", "type": "phrase"}, "push rod": {"zh": "推杆", "phonetic": "", "type": "phrase"}, "pushrod": {"zh": "推杆", "phonetic": "/'pushroud/", "type": "word"}, "valve lifter": {"zh": "挺柱", "phonetic": "", "type": "phrase"}, "camshaft": {"zh": "凸轮轴", "phonetic": "/'kæmfæft/", "type": "word"}, "camshaft actuator": {"zh": "凸轮轴执行机构", "phonetic": "", "type": "phrase"}, "timing chain": {"zh": "正时链条", "phonetic": "", "type": "phrase"}, "valve assembly": {"zh": "气门组", "phonetic": "", "type": "phrase"}, "valve spring": {"zh": "气门弹簧", "phonetic": "", "type": "phrase"}, "spring retainer": {"zh": "弹簧座", "phonetic": "", "type": "phrase"}, "valve locks": {"zh": "气门锁夹", "phonetic": "", "type": "phrase"}, "valve guide seal": {"zh": "气门导管油封", "phonetic": "", "type": "phrase"}, "valve stem": {"zh": "气门杆", "phonetic": "", "type": "phrase"}, "valve face": {"zh": "气门面", "phonetic": "", "type": "phrase"}, "valve seat": {"zh": "气门座", "phonetic": "", "type": "phrase"}, "cam lobes": {"zh": "凸轮凸角", "phonetic": "", "type": "phrase"}, "cam lobe": {"zh": "凸轮凸角", "phonetic": "", "type": "phrase"}, "hydraulic valve lifter": {"zh": "液压挺柱", "phonetic": "", "type": "phrase"}, "valve clearance": {"zh": "气门间隙", "phonetic": "", "type": "phrase"}, "timing belt": {"zh": "正时皮带", "phonetic": "", "type": "phrase"}, "timing gear": {"zh": "正时齿轮", "phonetic": "", "type": "phrase"}, "valve overlap": {"zh": "气门重叠", "phonetic": "", "type": "phrase"}, "turbo-charged engine": {"zh": "带蜗轮增压器的发动机", "phonetic": "", "type": "phrase"}, "SOHC": {"zh": "单凸轮轴顶置", "phonetic": "", "type": "phrase"}, "DOHC": {"zh": "双凸轮轴顶置", "phonetic": "", "type": "phrase"}, "classify": {"zh": "分类，归类", "phonetic": "/ˈklæsɪfaɪ/", "type": "word"}, "gasoline": {"zh": "汽油", "phonetic": "/ˈɡæsəliːn/", "type": "word"}, "spark": {"zh": "火花", "phonetic": "/spɑːrk/", "type": "word"}, "ignition": {"zh": "点火；着火", "phonetic": "/ɪɡˈnɪʃən/", "type": "word"}, "stroke": {"zh": "冲程", "phonetic": "/stroʊk/", "type": "word"}, "cylinder": {"zh": "气缸", "phonetic": "/'silində(r)/", "type": "word"}, "configuration": {"zh": "构型；布局", "phonetic": "/kənˌfɪɡjuˈreɪʃən/", "type": "word"}, "reciprocating": {"zh": "往复的", "phonetic": "/rɪˈsɪprəkeɪtɪŋ/", "type": "word"}, "straight": {"zh": "直的", "phonetic": "/streɪt/", "type": "word"}, "horizontal": {"zh": "水平的；卧式的", "phonetic": "/ˌhɔːrɪˈzɑːntl/", "type": "word"}, "vertically": {"zh": "垂直地", "phonetic": "/ˈvɜːrtɪkli/", "type": "word"}, "sufficiently": {"zh": "足够地", "phonetic": "/səˈfɪʃəntli/", "type": "word"}, "rigid": {"zh": "刚性的；坚固的", "phonetic": "/ˈrɪdʒɪd/", "type": "word"}, "frame": {"zh": "框架", "phonetic": "/freɪm/", "type": "word"}, "considerable": {"zh": "相当大的", "phonetic": "/kənˈsɪdərəbəl/", "type": "word"}, "crankpin": {"zh": "曲柄销", "phonetic": "/ˈkræŋkpɪn/", "type": "word"}, "manufacture": {"zh": "制造；工业", "phonetic": "/ˌmænjuˈfæktʃər/", "type": "word"}, "practice": {"zh": "实践", "phonetic": "/ˈpræktɪs/", "type": "word"}, "resemble": {"zh": "类似；像", "phonetic": "/rɪˈzembəl/", "type": "word"}, "headroom": {"zh": "净空；顶部空间", "phonetic": "/ˈhedruːm/", "type": "word"}, "pressure": {"zh": "压力", "phonetic": "/ˈpreʃər/", "type": "word"}, "boost": {"zh": "增压；提高", "phonetic": "/buːst/", "type": "word"}, "mixture": {"zh": "混合物；混合气", "phonetic": "/ˈmɪkstʃər/", "type": "word"}, "naturally": {"zh": "自然地", "phonetic": "/ˈnætʃrəli/", "type": "word"}, "supercharged": {"zh": "…增压", "phonetic": "/'suport/ardgd/", "type": "word"}, "induction": {"zh": "进气；吸入", "phonetic": "/ɪnˈdʌkʃən/", "type": "word"}, "separate": {"zh": "分开；分离", "phonetic": "/ˈsepəreɪt/", "type": "word"}, "suction": {"zh": "吸入；吸力", "phonetic": "/ˈsʌkʃən/", "type": "word"}, "valve": {"zh": "阀；气门", "phonetic": "/vælv/", "type": "word"}, "vacuum": {"zh": "真空", "phonetic": "/ˈvækjuːm/", "type": "word"}, "preparation": {"zh": "准备", "phonetic": "/ˌprepəˈreɪʃən/", "type": "word"}, "mechanical": {"zh": "机械的", "phonetic": "/mi'kænikəl/", "type": "word"}, "diesel": {"zh": "柴油机", "phonetic": "/'dizal, -sol/", "type": "word"}, "inject": {"zh": "注入；喷射", "phonetic": "/ɪnˈdʒekt/", "type": "word"}, "crank": {"zh": "曲柄", "phonetic": "/kræŋk/", "type": "word"}, "rod": {"zh": "杆；连杆", "phonetic": "/rɑːd/", "type": "word"}, "thermal": {"zh": "热的", "phonetic": "/ˈθɜːrməl/", "type": "word"}, "conversion": {"zh": "转换", "phonetic": "/kənˈvɜːrʒən/", "type": "word"}, "institution": {"zh": "机构", "phonetic": "/ˌɪnstɪˈtuːʃən/", "type": "word"}, "chamber": {"zh": "室；腔", "phonetic": "/ˈtʃeɪmbər/", "type": "word"}, "block": {"zh": "缸体；块", "phonetic": "/blɑːk/", "type": "word"}, "gasket": {"zh": "垫片", "phonetic": "/ˈɡæskɪt/", "type": "word"}, "alloy": {"zh": "合金", "phonetic": "/ˈælɔɪ/", "type": "word"}, "aluminum": {"zh": "铝", "phonetic": "/əˈluːmɪnəm/", "type": "word"}, "catheter": {"zh": "导管", "phonetic": "/ˈkæθɪtər/", "type": "word"}, "concave": {"zh": "凹的", "phonetic": "/kɑːnˈkeɪv/", "type": "word"}, "convex": {"zh": "凸的", "phonetic": "/ˈkɑːnveks/", "type": "word"}, "groove": {"zh": "槽；沟槽", "phonetic": "/ɡruːv/", "type": "word"}, "bearing": {"zh": "轴承", "phonetic": "/ˈberɪŋ/", "type": "word"}, "bore": {"zh": "孔；钻孔", "phonetic": "/bɔːr/", "type": "word"}, "seal": {"zh": "密封", "phonetic": "/siːl/", "type": "word"}, "leakage": {"zh": "泄漏", "phonetic": "/ˈliːkɪdʒ/", "type": "word"}, "scrape": {"zh": "刮除", "phonetic": "/skreɪp/", "type": "word"}, "drilled": {"zh": "钻孔的", "phonetic": "/drɪld/", "type": "word"}, "sprocket": {"zh": "链轮", "phonetic": "/ˈsprɑːkɪt/", "type": "word"}, "comparatively": {"zh": "相对地；比较地", "phonetic": "/kəmˈpærətɪvli/", "type": "word"}, "wheel": {"zh": "轮；车轮", "phonetic": "/wiːl/", "type": "word"}, "absorbing": {"zh": "吸收", "phonetic": "/əbˈzɔːrbɪŋ/", "type": "word"}, "indentation": {"zh": "凹痕；凹进", "phonetic": "/ˌɪndenˈteɪʃən/", "type": "word"}, "prescribed": {"zh": "规定的", "phonetic": "/prɪˈskraɪbd/", "type": "word"}, "aluminum alloy": {"zh": "铝合金", "phonetic": "", "type": "phrase"}, "operation": {"zh": "工作过程；操作", "phonetic": "/ˌɑːpəˈreɪʃən/", "type": "word"}, "respectively": {"zh": "分别地", "phonetic": "/rɪˈspektɪvli/", "type": "word"}, "actuator": {"zh": "执行器", "phonetic": "/ˈæktʃueɪtər/", "type": "word"}, "withstand": {"zh": "承受；经受住", "phonetic": "/wɪðˈstænd/", "type": "word"}, "extremely": {"zh": "极其；非常", "phonetic": "/ɪkˈstriːmli/", "type": "word"}, "temperature": {"zh": "温度", "phonetic": "/ˈtemprətʃər/", "type": "word"}, "appropriately": {"zh": "适当地", "phonetic": "/əˈproʊpriətli/", "type": "word"}, "rotate": {"zh": "旋转", "phonetic": "/ˈroʊteɪt/", "type": "word"}, "overhead": {"zh": "顶置的；上方的", "phonetic": "/ˌoʊvərˈhed/", "type": "word"}, "slender": {"zh": "细长的", "phonetic": "/ˈslendər/", "type": "word"}, "hydraulic": {"zh": "液压的", "phonetic": "/haɪˈdrɔːlɪk/", "type": "word"}, "noisy": {"zh": "嘈杂的", "phonetic": "/ˈnɔɪzi/", "type": "word"}, "wear": {"zh": "磨损", "phonetic": "/wer/", "type": "word"}, "rattle": {"zh": "嘎嘎作响；嘎嘎声", "phonetic": "/ˈrætl/", "type": "word"}, "tapping": {"zh": "轻敲；敲击声", "phonetic": "/ˈtæpɪŋ/", "type": "word"}, "metallic": {"zh": "金属的", "phonetic": "/məˈtælɪk/", "type": "word"}, "appropriate": {"zh": "适当的", "phonetic": "/əˈproʊpriət/", "type": "word"}, "synchronisation": {"zh": "同步", "phonetic": "/ˌsɪŋkrənəˈzeɪʃən/", "type": "word"}, "exhaust/intake valve": {"zh": "排气/进气气门", "phonetic": "", "type": "phrase"}, "coil spring": {"zh": "螺旋弹簧", "phonetic": "/kɔɪl sprɪŋ/", "type": "phrase"}, "valve drive group": {"zh": "气门传动组", "phonetic": "/vælv draɪv ɡruːp/", "type": "phrase"}, "metal chain": {"zh": "金属链", "phonetic": "/ˈmetl tʃeɪn/", "type": "phrase"}, "engine block": {"zh": "发动机缸体", "phonetic": "/ˈendʒɪn blɑːk/", "type": "phrase"}, "piston crown": {"zh": "活塞顶", "phonetic": "/ˈpɪstən kraʊn/", "type": "phrase"}, "be liable to": {"zh": "可能会；有…倾向", "phonetic": "/bi ˈlaɪəbəl tuː/", "type": "phrase"}, "be essential to": {"zh": "对……必要", "phonetic": "/bi ɪˈsenʃəl tuː/", "type": "phrase"}, "engine assembly": {"zh": "发动机总成", "phonetic": "/ˈendʒɪn əˈsembli/", "type": "phrase"}, "classification": {"zh": "分类", "phonetic": "/ˌklæsɪfɪˈkeɪʃən/", "type": "word"}, "structure": {"zh": "结构", "phonetic": "/ˈstrʌktʃər/", "type": "word"}, "function": {"zh": "功能", "phonetic": "/ˈfʌŋkʃən/", "type": "word"}, "comparison": {"zh": "对比", "phonetic": "/kəmˈpærɪsən/", "type": "word"}, "sentence parsing": {"zh": "句子解析", "phonetic": "/ˈsentəns ˈpɑːrsɪŋ/", "type": "phrase"}, "overview": {"zh": "总览", "phonetic": "/ˈoʊvərvjuː/", "type": "word"}, "overview map": {"zh": "总览图", "phonetic": "/ˈoʊvərvjuː mæp/", "type": "phrase"}, "classification tree": {"zh": "分类树", "phonetic": "/ˌklæsɪfɪˈkeɪʃən triː/", "type": "phrase"}, "four-stroke flow": {"zh": "四冲程流程图", "phonetic": "/fɔːr stroʊk floʊ/", "type": "phrase"}, "comparison table": {"zh": "对比表", "phonetic": "/kəmˈpærɪsən ˈteɪbəl/", "type": "phrase"}, "structure diagram": {"zh": "结构图", "phonetic": "/ˈstrʌktʃər ˈdaɪəɡræm/", "type": "phrase"}, "working chain": {"zh": "工作链图", "phonetic": "/ˈwɜːrkɪŋ tʃeɪn/", "type": "phrase"}, "bilingual intensive reading": {"zh": "双语精读", "phonetic": "/baɪˈlɪŋɡwəl ɪnˈtensɪv ˈriːdɪŋ/", "type": "phrase"}, "arrangement": {"zh": "排列；布置", "phonetic": "/əˈreɪndʒmənt/", "type": "word"}, "constructed": {"zh": "构成的；组成的", "phonetic": "/kənˈstrʌktɪd/", "type": "word"}, "four-stroke petrol engine": {"zh": "四冲程汽油机", "phonetic": "/fɔːr stroʊk ˈpetrəl ˈendʒɪn/", "type": "phrase"}, "four-stroke-cycle diesel engine": {"zh": "四冲程柴油机", "phonetic": "/fɔːr stroʊk saɪkəl ˈdiːzəl ˈendʒɪn/", "type": "phrase"}, "internal combustion engines": {"zh": "内燃机", "phonetic": "", "type": "phrase"}, "IC engines": {"zh": "内燃机", "phonetic": "", "type": "phrase"}, "petrol engines": {"zh": "汽油机", "phonetic": "", "type": "phrase"}, "spark-ignition engines": {"zh": "火花点火式发动机", "phonetic": "", "type": "phrase"}, "diesel engines": {"zh": "柴油机", "phonetic": "", "type": "phrase"}, "compression-ignition engines": {"zh": "压缩点火式发动机", "phonetic": "", "type": "phrase"}, "four-stroke cycle engines": {"zh": "四冲程发动机", "phonetic": "", "type": "phrase"}, "two-stroke cycle engines": {"zh": "二冲程发动机", "phonetic": "", "type": "phrase"}, "single-cylinder engines": {"zh": "单缸发动机", "phonetic": "", "type": "phrase"}, "multi-cylinder engines": {"zh": "多缸发动机", "phonetic": "", "type": "phrase"}, "inline-four engines": {"zh": "直列四缸发动机", "phonetic": "", "type": "phrase"}, "inline engines": {"zh": "直列式发动机", "phonetic": "", "type": "phrase"}, "V engines": {"zh": "V 型发动机", "phonetic": "", "type": "phrase"}, "W engines": {"zh": "W 型发动机", "phonetic": "", "type": "phrase"}, "horizontal engines": {"zh": "水平对置发动机", "phonetic": "", "type": "phrase"}, "naturally aspirated engines": {"zh": "自然吸气发动机", "phonetic": "", "type": "phrase"}, "supercharged engines": {"zh": "增压发动机", "phonetic": "", "type": "phrase"}, "turbochargers": {"zh": "蜗轮增压器", "phonetic": "/tsrboutjardgar/", "type": "word"}, "superchargers": {"zh": "增压器", "phonetic": "/'sjupo,tardg/", "type": "word"}, "intakes": {"zh": "进气", "phonetic": "/'in,tek/", "type": "word"}, "compressions": {"zh": "压缩", "phonetic": "/kom \"prefon/", "type": "word"}, "combustions": {"zh": "燃烧", "phonetic": "/kəm'bʌstʃən/", "type": "word"}, "exhausts": {"zh": "排气", "phonetic": "/rg'zɔst/", "type": "word"}, "top dead centers": {"zh": "上止点", "phonetic": "", "type": "phrase"}, "bottom dead centers": {"zh": "下止点", "phonetic": "", "type": "phrase"}, "intake valves": {"zh": "进气门", "phonetic": "", "type": "phrase"}, "exhaust valves": {"zh": "排气门", "phonetic": "", "type": "phrase"}, "air-fuel mixtures": {"zh": "空气燃油混合气", "phonetic": "", "type": "phrase"}, "spark plugs": {"zh": "火花塞", "phonetic": "", "type": "phrase"}, "fuel injectors": {"zh": "喷油器", "phonetic": "", "type": "phrase"}, "combustion chambers": {"zh": "燃烧室", "phonetic": "", "type": "phrase"}, "crankshafts": {"zh": "曲轴", "phonetic": "/'krankfeeft/", "type": "word"}, "crank-connecting rod mechanisms": {"zh": "曲柄连杆机构", "phonetic": "", "type": "phrase"}, "thermal energies": {"zh": "热能", "phonetic": "", "type": "phrase"}, "mechanical energies": {"zh": "机械能", "phonetic": "", "type": "phrase"}, "torques": {"zh": "(尤指机器的)扭转力；转(力)矩", "phonetic": "/tɔrk/", "type": "word"}, "engine block groups": {"zh": "机体组", "phonetic": "", "type": "phrase"}, "cylinder blocks": {"zh": "气缸体", "phonetic": "", "type": "phrase"}, "crankcases": {"zh": "曲轴箱", "phonetic": "/'kræŋk,keis/", "type": "word"}, "cylinder heads": {"zh": "气缸盖", "phonetic": "", "type": "phrase"}, "cylinder liners": {"zh": "气缸套", "phonetic": "", "type": "phrase"}, "cylinder sleeves": {"zh": "气缸套", "phonetic": "", "type": "phrase"}, "cylinder gaskets": {"zh": "气缸垫片", "phonetic": "", "type": "phrase"}, "oil pans": {"zh": "油底壳", "phonetic": "", "type": "phrase"}, "pistons": {"zh": "[ 机]活塞", "phonetic": "/piston/", "type": "word"}, "piston pins": {"zh": "活塞销", "phonetic": "", "type": "phrase"}, "connecting rods": {"zh": "连杆", "phonetic": "", "type": "phrase"}, "piston heads": {"zh": "活塞顶", "phonetic": "", "type": "phrase"}, "piston lands": {"zh": "活塞环岸", "phonetic": "", "type": "phrase"}, "piston skirts": {"zh": "活塞裙部", "phonetic": "", "type": "phrase"}, "piston ringses": {"zh": "活塞环", "phonetic": "", "type": "phrase"}, "compression ringses": {"zh": "压缩环", "phonetic": "", "type": "phrase"}, "oil rings": {"zh": "油环", "phonetic": "", "type": "phrase"}, "flywheels": {"zh": "飞轮", "phonetic": "/'flar hwil,-.wil/", "type": "word"}, "main bearingses": {"zh": "主轴承", "phonetic": "", "type": "phrase"}, "vibration dampers": {"zh": "减振器", "phonetic": "", "type": "phrase"}, "belt pulleys": {"zh": "皮带轮", "phonetic": "", "type": "phrase"}, "wear-resistants": {"zh": "抗磨损的，耐磨性", "phonetic": "", "type": "phrase"}, "valve trains": {"zh": "配气机构", "phonetic": "", "type": "phrase"}, "rocker armses": {"zh": "摇臂", "phonetic": "", "type": "phrase"}, "push rods": {"zh": "推杆", "phonetic": "", "type": "phrase"}, "pushrods": {"zh": "推杆", "phonetic": "/'pushroud/", "type": "word"}, "valve lifters": {"zh": "挺柱", "phonetic": "", "type": "phrase"}, "camshafts": {"zh": "凸轮轴", "phonetic": "/'kæmfæft/", "type": "word"}, "camshaft actuators": {"zh": "凸轮轴执行机构", "phonetic": "", "type": "phrase"}, "timing chains": {"zh": "正时链条", "phonetic": "", "type": "phrase"}, "valve assemblies": {"zh": "气门组", "phonetic": "", "type": "phrase"}, "valve springs": {"zh": "气门弹簧", "phonetic": "", "type": "phrase"}, "spring retainers": {"zh": "弹簧座", "phonetic": "", "type": "phrase"}, "valve lockses": {"zh": "气门锁夹", "phonetic": "", "type": "phrase"}, "valve guide seals": {"zh": "气门导管油封", "phonetic": "", "type": "phrase"}, "valve stems": {"zh": "气门杆", "phonetic": "", "type": "phrase"}, "valve faces": {"zh": "气门面", "phonetic": "", "type": "phrase"}, "valve seats": {"zh": "气门座", "phonetic": "", "type": "phrase"}, "cam lobeses": {"zh": "凸轮凸角", "phonetic": "", "type": "phrase"}, "hydraulic valve lifters": {"zh": "液压挺柱", "phonetic": "", "type": "phrase"}, "valve clearances": {"zh": "气门间隙", "phonetic": "", "type": "phrase"}, "timing belts": {"zh": "正时皮带", "phonetic": "", "type": "phrase"}, "timing gears": {"zh": "正时齿轮", "phonetic": "", "type": "phrase"}, "valve overlaps": {"zh": "气门重叠", "phonetic": "", "type": "phrase"}, "turbo-charged engines": {"zh": "带蜗轮增压器的发动机", "phonetic": "", "type": "phrase"}, "classifies": {"zh": "分类，归类", "phonetic": "/ˈklæsɪfaɪ/", "type": "word"}, "gasolines": {"zh": "汽油", "phonetic": "/ˈɡæsəliːn/", "type": "word"}, "sparks": {"zh": "火花", "phonetic": "/spɑːrk/", "type": "word"}, "ignitions": {"zh": "点火；着火", "phonetic": "/ɪɡˈnɪʃən/", "type": "word"}, "strokes": {"zh": "冲程", "phonetic": "/stroʊk/", "type": "word"}, "cylinders": {"zh": "气缸", "phonetic": "/'silində(r)/", "type": "word"}, "configurations": {"zh": "构型；布局", "phonetic": "/kənˌfɪɡjuˈreɪʃən/", "type": "word"}, "reciprocatings": {"zh": "往复的", "phonetic": "/rɪˈsɪprəkeɪtɪŋ/", "type": "word"}, "straights": {"zh": "直的", "phonetic": "/streɪt/", "type": "word"}, "horizontals": {"zh": "水平的；卧式的", "phonetic": "/ˌhɔːrɪˈzɑːntl/", "type": "word"}, "verticallies": {"zh": "垂直地", "phonetic": "/ˈvɜːrtɪkli/", "type": "word"}, "sufficientlies": {"zh": "足够地", "phonetic": "/səˈfɪʃəntli/", "type": "word"}, "rigids": {"zh": "刚性的；坚固的", "phonetic": "/ˈrɪdʒɪd/", "type": "word"}, "frames": {"zh": "框架", "phonetic": "/freɪm/", "type": "word"}, "considerables": {"zh": "相当大的", "phonetic": "/kənˈsɪdərəbəl/", "type": "word"}, "crankpins": {"zh": "曲柄销", "phonetic": "/ˈkræŋkpɪn/", "type": "word"}, "manufactures": {"zh": "制造；工业", "phonetic": "/ˌmænjuˈfæktʃər/", "type": "word"}, "practices": {"zh": "实践", "phonetic": "/ˈpræktɪs/", "type": "word"}, "resembles": {"zh": "类似；像", "phonetic": "/rɪˈzembəl/", "type": "word"}, "headrooms": {"zh": "净空；顶部空间", "phonetic": "/ˈhedruːm/", "type": "word"}, "pressures": {"zh": "压力", "phonetic": "/ˈpreʃər/", "type": "word"}, "boosts": {"zh": "增压；提高", "phonetic": "/buːst/", "type": "word"}, "mixtures": {"zh": "混合物；混合气", "phonetic": "/ˈmɪkstʃər/", "type": "word"}, "naturallies": {"zh": "自然地", "phonetic": "/ˈnætʃrəli/", "type": "word"}, "superchargeds": {"zh": "…增压", "phonetic": "/'suport/ardgd/", "type": "word"}, "inductions": {"zh": "进气；吸入", "phonetic": "/ɪnˈdʌkʃən/", "type": "word"}, "separates": {"zh": "分开；分离", "phonetic": "/ˈsepəreɪt/", "type": "word"}, "suctions": {"zh": "吸入；吸力", "phonetic": "/ˈsʌkʃən/", "type": "word"}, "valves": {"zh": "阀；气门", "phonetic": "/vælv/", "type": "word"}, "vacuums": {"zh": "真空", "phonetic": "/ˈvækjuːm/", "type": "word"}, "preparations": {"zh": "准备", "phonetic": "/ˌprepəˈreɪʃən/", "type": "word"}, "mechanicals": {"zh": "机械的", "phonetic": "/mi'kænikəl/", "type": "word"}, "diesels": {"zh": "柴油机", "phonetic": "/'dizal, -sol/", "type": "word"}, "injects": {"zh": "注入；喷射", "phonetic": "/ɪnˈdʒekt/", "type": "word"}, "cranks": {"zh": "曲柄", "phonetic": "/kræŋk/", "type": "word"}, "rods": {"zh": "杆；连杆", "phonetic": "/rɑːd/", "type": "word"}, "thermals": {"zh": "热的", "phonetic": "/ˈθɜːrməl/", "type": "word"}, "conversions": {"zh": "转换", "phonetic": "/kənˈvɜːrʒən/", "type": "word"}, "institutions": {"zh": "机构", "phonetic": "/ˌɪnstɪˈtuːʃən/", "type": "word"}, "chambers": {"zh": "室；腔", "phonetic": "/ˈtʃeɪmbər/", "type": "word"}, "blocks": {"zh": "缸体；块", "phonetic": "/blɑːk/", "type": "word"}, "gaskets": {"zh": "垫片", "phonetic": "/ˈɡæskɪt/", "type": "word"}, "alloys": {"zh": "合金", "phonetic": "/ˈælɔɪ/", "type": "word"}, "aluminums": {"zh": "铝", "phonetic": "/əˈluːmɪnəm/", "type": "word"}, "catheters": {"zh": "导管", "phonetic": "/ˈkæθɪtər/", "type": "word"}, "concaves": {"zh": "凹的", "phonetic": "/kɑːnˈkeɪv/", "type": "word"}, "convexes": {"zh": "凸的", "phonetic": "/ˈkɑːnveks/", "type": "word"}, "grooves": {"zh": "槽；沟槽", "phonetic": "/ɡruːv/", "type": "word"}, "bearings": {"zh": "轴承", "phonetic": "/ˈberɪŋ/", "type": "word"}, "bores": {"zh": "孔；钻孔", "phonetic": "/bɔːr/", "type": "word"}, "seals": {"zh": "密封", "phonetic": "/siːl/", "type": "word"}, "leakages": {"zh": "泄漏", "phonetic": "/ˈliːkɪdʒ/", "type": "word"}, "scrapes": {"zh": "刮除", "phonetic": "/skreɪp/", "type": "word"}, "drilleds": {"zh": "钻孔的", "phonetic": "/drɪld/", "type": "word"}, "sprockets": {"zh": "链轮", "phonetic": "/ˈsprɑːkɪt/", "type": "word"}, "comparativelies": {"zh": "相对地；比较地", "phonetic": "/kəmˈpærətɪvli/", "type": "word"}, "wheels": {"zh": "轮；车轮", "phonetic": "/wiːl/", "type": "word"}, "absorbings": {"zh": "吸收", "phonetic": "/əbˈzɔːrbɪŋ/", "type": "word"}, "indentations": {"zh": "凹痕；凹进", "phonetic": "/ˌɪndenˈteɪʃən/", "type": "word"}, "prescribeds": {"zh": "规定的", "phonetic": "/prɪˈskraɪbd/", "type": "word"}, "aluminum alloys": {"zh": "铝合金", "phonetic": "", "type": "phrase"}, "operations": {"zh": "工作过程；操作", "phonetic": "/ˌɑːpəˈreɪʃən/", "type": "word"}, "respectivelies": {"zh": "分别地", "phonetic": "/rɪˈspektɪvli/", "type": "word"}, "actuators": {"zh": "执行器", "phonetic": "/ˈæktʃueɪtər/", "type": "word"}, "withstands": {"zh": "承受；经受住", "phonetic": "/wɪðˈstænd/", "type": "word"}, "extremelies": {"zh": "极其；非常", "phonetic": "/ɪkˈstriːmli/", "type": "word"}, "temperatures": {"zh": "温度", "phonetic": "/ˈtemprətʃər/", "type": "word"}, "appropriatelies": {"zh": "适当地", "phonetic": "/əˈproʊpriətli/", "type": "word"}, "rotates": {"zh": "旋转", "phonetic": "/ˈroʊteɪt/", "type": "word"}, "overheads": {"zh": "顶置的；上方的", "phonetic": "/ˌoʊvərˈhed/", "type": "word"}, "slenders": {"zh": "细长的", "phonetic": "/ˈslendər/", "type": "word"}, "hydraulics": {"zh": "液压的", "phonetic": "/haɪˈdrɔːlɪk/", "type": "word"}, "noisies": {"zh": "嘈杂的", "phonetic": "/ˈnɔɪzi/", "type": "word"}, "wears": {"zh": "磨损", "phonetic": "/wer/", "type": "word"}, "rattles": {"zh": "嘎嘎作响；嘎嘎声", "phonetic": "/ˈrætl/", "type": "word"}, "tappings": {"zh": "轻敲；敲击声", "phonetic": "/ˈtæpɪŋ/", "type": "word"}, "metallics": {"zh": "金属的", "phonetic": "/məˈtælɪk/", "type": "word"}, "appropriates": {"zh": "适当的", "phonetic": "/əˈproʊpriət/", "type": "word"}, "synchronisations": {"zh": "同步", "phonetic": "/ˌsɪŋkrənəˈzeɪʃən/", "type": "word"}, "exhaust/intake valves": {"zh": "排气/进气气门", "phonetic": "", "type": "phrase"}, "coil springs": {"zh": "螺旋弹簧", "phonetic": "/kɔɪl sprɪŋ/", "type": "phrase"}, "valve drive groups": {"zh": "气门传动组", "phonetic": "/vælv draɪv ɡruːp/", "type": "phrase"}, "metal chains": {"zh": "金属链", "phonetic": "/ˈmetl tʃeɪn/", "type": "phrase"}, "engine blocks": {"zh": "发动机缸体", "phonetic": "/ˈendʒɪn blɑːk/", "type": "phrase"}, "piston crowns": {"zh": "活塞顶", "phonetic": "/ˈpɪstən kraʊn/", "type": "phrase"}, "be liable tos": {"zh": "可能会；有…倾向", "phonetic": "/bi ˈlaɪəbəl tuː/", "type": "phrase"}, "be essential tos": {"zh": "对……必要", "phonetic": "/bi ɪˈsenʃəl tuː/", "type": "phrase"}, "engine assemblies": {"zh": "发动机总成", "phonetic": "/ˈendʒɪn əˈsembli/", "type": "phrase"}, "classifications": {"zh": "分类", "phonetic": "/ˌklæsɪfɪˈkeɪʃən/", "type": "word"}, "structures": {"zh": "结构", "phonetic": "/ˈstrʌktʃər/", "type": "word"}, "functions": {"zh": "功能", "phonetic": "/ˈfʌŋkʃən/", "type": "word"}, "comparisons": {"zh": "对比", "phonetic": "/kəmˈpærɪsən/", "type": "word"}, "sentence parsings": {"zh": "句子解析", "phonetic": "/ˈsentəns ˈpɑːrsɪŋ/", "type": "phrase"}, "overviews": {"zh": "总览", "phonetic": "/ˈoʊvərvjuː/", "type": "word"}, "overview maps": {"zh": "总览图", "phonetic": "/ˈoʊvərvjuː mæp/", "type": "phrase"}, "classification trees": {"zh": "分类树", "phonetic": "/ˌklæsɪfɪˈkeɪʃən triː/", "type": "phrase"}, "four-stroke flows": {"zh": "四冲程流程图", "phonetic": "/fɔːr stroʊk floʊ/", "type": "phrase"}, "comparison tables": {"zh": "对比表", "phonetic": "/kəmˈpærɪsən ˈteɪbəl/", "type": "phrase"}, "structure diagrams": {"zh": "结构图", "phonetic": "/ˈstrʌktʃər ˈdaɪəɡræm/", "type": "phrase"}, "working chains": {"zh": "工作链图", "phonetic": "/ˈwɜːrkɪŋ tʃeɪn/", "type": "phrase"}, "bilingual intensive readings": {"zh": "双语精读", "phonetic": "/baɪˈlɪŋɡwəl ɪnˈtensɪv ˈriːdɪŋ/", "type": "phrase"}, "arrangements": {"zh": "排列；布置", "phonetic": "/əˈreɪndʒmənt/", "type": "word"}, "constructeds": {"zh": "构成的；组成的", "phonetic": "/kənˈstrʌktɪd/", "type": "word"}, "four-stroke petrol engines": {"zh": "四冲程汽油机", "phonetic": "/fɔːr stroʊk ˈpetrəl ˈendʒɪn/", "type": "phrase"}, "four-stroke-cycle diesel engines": {"zh": "四冲程柴油机", "phonetic": "/fɔːr stroʊk saɪkəl ˈdiːzəl ˈendʒɪn/", "type": "phrase"}};
+
+const DISPLAY_NAMES = {
+  'word':'重点词汇',
+  'phrase':'重点短语',
+  'auto-word':'普通单词',
+  'contextual':'句中参考'
+};
+
+const BASIC_WORDS = {"map": "路线图", "tree": "树状图", "flow": "流程图", "table": "表格", "diagram": "图示", "working": "工作的", "chain": "链；链条", "sentence": "句子", "parsing": "解析", "bilingual": "双语的", "intensive": "精读的", "reading": "阅读", "automotive": "汽车的", "engine": "发动机", "assembly": "总成", "html": "HTML 页面", "ppt": "演示文稿", "timing": "正时；定时", "internal": "内部的", "engines": "发动机", "can": "能够；可以", "be": "是；被", "classified": "被分类", "by": "按；通过", "what": "什么", "train": "机构；传动系统", "changes": "改变", "gas": "气体", "force": "力", "on": "在……上", "into": "变成；进入", "rotation": "旋转", "so": "因此；这样", "that": "那；以便", "converted": "被转换", "spring": "弹簧", "retainer": "保持器；座", "locks": "锁夹", "guide": "导向器；导管", "control": "控制", "belt": "皮带", "gear": "齿轮", "overlap": "重叠", "based": "基于", "fuel": "燃料", "used": "使用的", "number": "数量", "of": "……的", "per": "每", "step": "步骤", "open": "打开；开启的", "enters": "进入", "both": "两者都", "compress": "压缩", "power": "动力；功率", "ignites": "点燃", "work": "功；工作", "turns": "使转动；转动", "spent": "排出的；耗尽的", "gases": "气体", "expelled": "排出", "group": "组", "head": "头部；盖", "liner": "衬套；内衬", "oil": "机油；油", "pan": "油底壳；盘", "and": "和", "ring": "环", "pin": "销", "main": "主要的", "lifter": "挺柱", "rocker": "摇臂", "arm": "臂", "there": "那里；有", "several": "若干；几个", "possible": "可能的", "ways": "方式", "to": "到；去；用于", "its": "它的", "is": "是", "turn": "转动", "a": "一个", "b": "B", "pushes": "推动", "which": "哪个；……的那个", "down": "向下", "warm-up": "热身；导入", "introduction": "导入", "land": "环岸；陆地", "skirt": "裙部", "pins": "销", "rings": "环", "drive": "驱动", "cam": "凸轮", "clearance": "间隙", "discuss": "讨论", "with": "和", "your": "你的", "partner": "搭档", "about": "关于", "following": "下面的", "picture": "图片", "answer": "回答", "questions": "问题", "does": "做；助动词", "consist": "由……组成", "what's": "是什么", "where": "哪里", "located": "位于", "in": "在……中", "car": "汽车", "ic": "内燃机", "given": "给出的", "below": "在下方", "two": "二；两个", "types": "类型", "also": "也", "called": "叫作", "divided": "分成", "groups": "组", "either": "或者；两者之一", "four": "四", "or": "或者", "an": "一个", "needs": "需要", "complete": "完整的", "one": "一；一个", "if": "如果", "it": "它", "only": "只；仅仅", "thus": "因此", "two-cycle": "二冲程", "fires": "点火；做功", "twice": "两次；两倍", "as": "像；作为；当……时", "often": "经常", "according": "根据", "basic": "基本的", "seen": "见到；常见于", "motorcycles": "摩托车", "multiple": "多个的", "type": "类型", "four-cylinder": "四缸的", "all": "全部；所有", "mounted": "安装的", "line": "直线；一列", "simplest": "最简单的", "most": "最；大多数", "common": "常见的", "arranged": "排列的", "has": "有", "more": "更多", "than": "比", "eight": "八", "becomes": "变得", "difficult": "困难的", "make": "使；制造", "quite": "相当", "long": "长的", "takes": "占据；带走", "up": "向上；起来", "space": "空间", "attached": "连接的", "each": "每个", "permits": "允许", "reducing": "减少", "length": "长度", "almost": "几乎", "one-half": "一半", "making": "使得", "much": "很多；非常", "stiff": "坚固的；刚性的", "lying": "位于；平放", "bank": "列；组", "angle": "角度", "between": "在……之间", "banks": "列；组", "may": "可以；可能", "vary": "变化", "manufacturing": "制造中的", "from": "从；来自", "angles": "角度", "being": "是；处于", "letter": "字母", "same": "相同的", "way": "方式", "those": "那些", "increased": "增加的", "this": "这；这个", "little": "很少；小的", "trucks": "卡车", "air": "空气", "depends": "取决于", "solely": "仅仅；单独地", "atmospheric": "大气的", "relies": "依靠", "forced": "强制的", "through": "通过", "completes": "完成", "while": "当……时", "turning": "转动", "termed": "称作", "known": "已知的；称为", "begins": "开始", "at": "在", "top": "顶部", "dead": "止点的；静止的", "center": "中心", "ends": "结束", "bottom": "底部", "must": "必须", "position": "位置", "pulls": "拉动", "producing": "产生", "downward": "向下的", "motion": "运动", "just": "正好；刚刚", "end": "末端；结束", "compresses": "压缩", "for": "为了；对于", "during": "在……期间", "stage": "阶段", "when": "当……时", "compressed": "被压缩的", "ignited": "被点燃的", "forcefully": "有力地", "returning": "返回", "produces": "产生", "outlet": "出口", "once": "一次；一旦", "again": "再次", "returns": "返回", "action": "作用；动作", "expels": "排出", "differs": "不同于", "using": "使用", "highly": "高度地", "hot": "热的", "ignite": "点燃", "rather": "而不是；相当", "initially": "最初", "introduced": "引入；进入", "high": "高的", "causes": "导致", "rise": "上升", "injected": "喷入；注入", "directly": "直接地", "injector": "喷油器", "ensures": "确保", "broken": "被打碎的；被雾化的", "small": "小的", "droplets": "液滴", "distributed": "分布的", "evenly": "均匀地", "heat": "热量", "generated": "产生的", "passage": "短文；通道", "achieves": "实现", "transmit": "传递", "change": "改变", "movement": "运动", "moves": "移动", "outward": "向外地", "consists": "由……组成", "three": "三", "parts": "部分", "includes": "包括", "supporting": "支撑的", "other": "其他的", "usually": "通常", "made": "制成的", "iron": "铁", "lifters": "挺柱", "houses": "容纳；装有", "heavily": "牢固地；重重地", "constructed": "构造的；建造的", "necessary": "必要的", "maintaining": "保持", "correct": "正确的", "alignment": "对准；校正", "cooling": "冷却", "lubricating": "润滑", "passages": "通道", "provided": "提供；设置", "lower": "下部的", "part": "部分", "upper": "上部的", "fitted": "安装的", "form": "形成", "japan": "日本", "some": "一些", "countries": "国家", "call": "称呼；称作", "serving": "起……作用", "inner": "内部的", "wall": "壁；墙", "forms": "形成", "sliding": "滑动的", "surface": "表面", "retaining": "保持", "lubricant": "润滑剂", "within": "在……内部", "receives": "接收", "transmits": "传递", "sits": "位于；坐落", "purpose": "目的", "ensure": "确保", "maximum": "最大的", "avoid": "避免", "leakage": "泄漏", "critical": "关键的", "sealing": "密封", "application": "应用", "any": "任何", "shares": "具有；共享", "strength": "强度", "requirements": "要求", "components": "部件", "complex": "复杂的", "box": "箱体", "portal": "通道口", "hole": "孔", "installed": "安装的", "installation": "安装", "processed": "加工的", "fastened": "固定的", "roof": "屋顶", "fits": "适合；安装", "over": "在……上方", "house": "房屋", "underside": "下侧", "composed": "由……组成的", "various": "各种各样的", "designs": "设计", "such": "这样的", "flat": "平的", "concave": "凹的", "convex": "凸的", "great": "大的", "variety": "多样；种类", "shapes": "形状", "match": "匹配", "design": "设计", "cut": "切出", "sides": "侧面", "holes": "孔", "slots": "槽", "drainage": "排油；排水", "behind": "在……后面", "lands": "环岸", "provide": "提供", "area": "区域", "contact": "接触", "hard": "硬的", "steel": "钢", "methods": "方法", "mounting": "安装", "allow": "允许", "rotate": "旋转", "precise": "精确的", "fit": "装配；适合", "walls": "壁", "prevent": "防止", "scrape": "刮去", "excess": "多余的", "flows": "流入", "many": "许多", "steel-forged": "钢锻的", "serves": "起作用", "adequately": "足够地", "strong": "强的", "handles": "承受；处理", "entire": "整个的", "output": "输出", "therefore": "因此", "actually": "实际上", "front": "前部", "carries": "带有；承载", "devices": "装置", "drives": "驱动", "water": "水", "pump": "水泵", "help": "帮助", "run": "运转", "smoothly": "平稳地", "absorbing": "吸收", "releasing": "释放", "inertia": "惯性", "tends": "倾向于", "keep": "保持", "constant": "恒定的", "speed": "速度", "face": "表面", "marks": "标记", "indentation": "凹痕；刻痕", "setting": "设定", "systems": "系统", "relative": "相对于", "prescribed": "规定的", "positions": "位置", "mechanical": "机械的", "system": "系统", "controls": "控制", "operation": "工作；运行", "coordinate": "协调", "respectively": "分别地", "movements": "运动", "take": "发生；拿", "place": "位置；发生", "exactly": "准确地", "right": "正确的；右边的", "moments": "时刻", "opening": "打开", "including": "包括", "seat": "落座；阀座", "leaks": "泄漏", "require": "需要", "coil": "线圈；螺旋", "them": "它们", "actuated": "被驱动的", "stem": "阀杆", "seating": "座落；安装", "operates": "操作；作用于", "above": "在……上方", "today": "如今", "rely": "依赖", "single": "单一的", "overhead": "顶置的", "modern": "现代的", "driven": "驱动的", "key": "关键的", "spins": "旋转", "shape": "形状", "performs": "表现；运行", "different": "不同的", "ranges": "范围", "slender": "细长的", "metal": "金属", "rests": "位于；支撑", "goes": "进入；上到", "follows": "跟随", "closing": "关闭", "out": "出去", "solid": "实心的", "hydraulic": "液压的", "device": "装置", "zero": "零", "regular": "定期的", "adjusting": "调整", "follower": "从动件", "prevents": "防止", "binding": "卡滞", "expand": "膨胀", "lead": "导致", "noisy": "嘈杂的", "wear": "磨损", "rattle": "嘎嘎声", "against": "抵着；反对", "until": "直到", "reach": "达到", "operating": "工作的", "tightly": "紧密地", "gas-tight": "气密的", "fully": "完全地", "develop": "产生；发展", "full": "充分的；满的", "liable": "可能的", "burnt": "烧坏的", "passing": "经过的", "likelihood": "可能性", "touching": "碰到", "seriously": "严重地", "damage": "损坏", "needed": "需要的", "means": "意味着；手段", "move": "移动", "far": "远", "enough": "足够", "however": "然而", "set": "设定", "too": "太；也", "cause": "导致", "light": "轻微的", "metallic": "金属的", "linked": "连接的", "kept": "保持", "synchronisation": "同步", "order": "为了；顺序", "accomplish": "实现", "mechanisms": "机构", "essential": "必要的", "proper": "恰当的", "named": "命名为", "period": "一段时间", "time": "时间", "new": "新的", "burned": "燃烧过的", "charge": "充量；混合气", "blown": "吹出"};
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function termPattern(term) {
+  const escaped = escapeRegExp(term);
+  return new RegExp(`(^|[^A-Za-z0-9-])(${escaped})(?=$|[^A-Za-z0-9-])`, 'i');
+}
+
+const sortedTerms = Object.keys(GLOSSARY).sort((a,b)=> b.length - a.length);
+const termPatterns = sortedTerms.map(term => [term, termPattern(term)]);
+const WORD_TOKEN_RE = /([A-Za-z]+(?:-[A-Za-z]+)?(?:'[A-Za-z]+)?)/g;
+
+function normalizeWord(raw) {
+  return (raw || '')
+    .toLowerCase()
+    .replace(/^['\"]+|['\".,;:!?()\[\]{}]+$/g, '')
+    .replace(/’/g, "'")
+    .trim();
+}
+
+function buildCandidates(raw) {
+  const base = normalizeWord(raw);
+  const list = [];
+  const add = (v) => { if (v && !list.includes(v)) list.push(v); };
+  add(base);
+  add(base.replace(/'s$/, ''));
+  add(base.replace(/s'$/, 's'));
+  if (base.endsWith('ies')) add(base.slice(0,-3) + 'y');
+  if (base.endsWith('es')) { add(base.slice(0,-2)); add(base.slice(0,-1)); }
+  if (base.endsWith('s')) add(base.slice(0,-1));
+  if (base.endsWith('ing')) { add(base.slice(0,-3)); add(base.slice(0,-3) + 'e'); }
+  if (base.endsWith('ed')) { add(base.slice(0,-2)); add(base.slice(0,-1)); add(base.slice(0,-2) + 'e'); }
+  if (base.endsWith('ly')) add(base.slice(0,-2));
+  if (base.endsWith("'re")) add(base.replace(/'re$/, ''));
+  if (base.endsWith("'ve")) add(base.replace(/'ve$/, ''));
+  if (base.endsWith("'ll")) add(base.replace(/'ll$/, ''));
+  if (base.endsWith("'d")) add(base.replace(/'d$/, ''));
+  if (base.includes('-')) {
+    add(base.replace(/-/g,' '));
+    const parts = base.split('-');
+    if (parts.length === 2) { add(parts[0]); add(parts[1]); }
+  }
+  return list.filter(Boolean);
+}
+
+function lookupTerm(raw) {
+  const candidates = buildCandidates(raw);
+  for (const key of candidates) {
+    if (GLOSSARY[key]) return { key, info: GLOSSARY[key], source:'glossary' };
+  }
+  for (const key of candidates) {
+    if (BASIC_WORDS[key]) return { key, info: { zh: BASIC_WORDS[key], phonetic:'', type:'auto-word' }, source:'basic' };
+  }
+  return null;
+}
+
+function annotateText(text) {
+  let segments = [text];
+  for (const [term, regex] of termPatterns) {
+    const entry = GLOSSARY[term];
+    const klass = entry.type === 'phrase' ? 'phrase' : 'word';
+    const next = [];
+    for (const seg of segments) {
+      if (typeof seg !== 'string') { next.push(seg); continue; }
+      let remaining = seg;
+      while (remaining) {
+        const match = regex.exec(remaining);
+        if (!match) { next.push(remaining); break; }
+        const lead = match[1] || '';
+        const matched = match[2];
+        const idx = match.index;
+        const before = remaining.slice(0, idx) + lead;
+        if (before) next.push(before);
+        next.push({term, text: matched, klass, pop: GLOSSARY[term].zh, contextual:false});
+        remaining = remaining.slice(idx + match[0].length);
+      }
+    }
+    segments = next;
+  }
+  // Wrap every remaining English word so every word can be clicked.
+  const finalSegs = [];
+  for (const seg of segments) {
+    if (typeof seg !== 'string') { finalSegs.push(seg); continue; }
+    let last = 0;
+    seg.replace(WORD_TOKEN_RE, (m, word, offset) => {
+      if (offset > last) finalSegs.push(seg.slice(last, offset));
+      const found = lookupTerm(word);
+      finalSegs.push({
+        term: found ? found.key : normalizeWord(word),
+        text: word,
+        klass: found ? (found.info.type === 'phrase' ? 'phrase' : (found.info.type || 'auto-word')) : 'auto-word',
+        pop: found ? found.info.zh : '',
+        contextual: !found
+      });
+      last = offset + word.length;
+      return m;
+    });
+    if (last < seg.length) finalSegs.push(seg.slice(last));
+  }
+  return finalSegs;
+}
+
+function nearestContextZh(node) {
+  const reading = node.closest('.reading-block');
+  if (reading) {
+    const zh = reading.querySelector('.reading-chinese');
+    if (zh) return zh.textContent.trim();
+  }
+  const box = node.closest('.sentence-card,.card,.step,.group,.chain-item,.tree-item,.section,.badge,.mini,.tag');
+  if (box) {
+    const zh = box.querySelector('.zh-note,.toc-zh,.small,.reading-chinese');
+    if (zh) return zh.textContent.trim();
+  }
+  return '';
+}
+
+function annotateNode(node) {
+  if (!node) return;
+  const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, {
+    acceptNode(textNode) {
+      const parent = textNode.parentElement;
+      if (!parent) return NodeFilter.FILTER_REJECT;
+      if (parent.closest('script,style,button,.gloss-term,.reading-chinese,.toc-zh,.term-name,.term-phone,.term-zh,.term-type,.term-context')) return NodeFilter.FILTER_REJECT;
+      if (!/[A-Za-z]/.test(textNode.nodeValue)) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const targets = [];
+  while (walker.nextNode()) targets.push(walker.currentNode);
+  targets.forEach(textNode => {
+    const parts = annotateText(textNode.nodeValue);
+    if (parts.every(part => typeof part === 'string')) return;
+    const frag = document.createDocumentFragment();
+    const contextZh = nearestContextZh(textNode.parentElement || node);
+    parts.forEach(part => {
+      if (typeof part === 'string') {
+        frag.appendChild(document.createTextNode(part));
+      } else {
+        const span = document.createElement('span');
+        const klass = part.klass === 'auto-word' ? 'auto-word' : part.klass;
+        span.className = `gloss-term ${klass}`;
+        span.dataset.key = part.term;
+        span.dataset.display = part.text;
+        span.dataset.context = contextZh || '';
+        span.textContent = part.text;
+        if (part.pop && part.klass !== 'auto-word') {
+          const pop = document.createElement('span');
+          pop.className = 'inline-pop';
+          pop.textContent = part.pop;
+          span.appendChild(pop);
+        }
+        frag.appendChild(span);
+      }
+    });
+    textNode.parentNode.replaceChild(frag, textNode);
+  });
+}
+
+const annotateSelectors = [
+  '.toc-en', '.subtitle', '.badge', '.mini', '.tag', '.section h2', '.section p.lead',
+  '.card', '.tree-item', '.step', '.group', '.chain-item', '.sentence-card', '.reading-title',
+  '.en-line', '.term-name'
+];
+annotateSelectors.forEach(sel => {
+  document.querySelectorAll(sel).forEach(el => annotateNode(el));
+});
+
+const liveTerm = document.getElementById('liveTerm');
+const livePhone = document.getElementById('livePhone');
+const liveZh = document.getElementById('liveZh');
+const liveType = document.getElementById('liveType');
+const liveSpeak = document.getElementById('liveSpeak');
+const liveContext = document.getElementById('liveContext');
+
+function updateGlossaryCard(rawTerm, displayText, contextZh='') {
+  const found = lookupTerm(rawTerm) || lookupTerm(displayText) || lookupTerm((displayText||'').replace(/'s$/,'') );
+  const shown = displayText || rawTerm;
+  liveTerm.textContent = shown;
+  liveSpeak.dataset.speak = shown;
+  if (found) {
+    livePhone.textContent = found.info.phonetic || '暂无音标，点击下方按钮可听英文朗读';
+    liveZh.textContent = found.info.zh;
+    liveType.textContent = DISPLAY_NAMES[found.info.type] || '普通单词';
+    liveContext.textContent = contextZh ? `句中参考：${contextZh}` : '已显示该词或短语的中文释义。';
+  } else {
+    livePhone.textContent = '暂无音标，点击下方按钮可听英文朗读';
+    liveZh.textContent = contextZh ? '本词未单独收录，建议结合句中翻译理解。' : '本词暂未单独收录，可继续扩充词库。';
+    liveType.textContent = DISPLAY_NAMES['contextual'];
+    liveContext.textContent = contextZh ? `句中参考：${contextZh}` : '当前没有可用的句中参考。';
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const termNode = e.target.closest('.gloss-term');
+  if (termNode) {
+    document.querySelectorAll('.gloss-term.active').forEach(n => n.classList.remove('active'));
+    termNode.classList.add('active');
+    updateGlossaryCard(termNode.dataset.key || termNode.dataset.display, termNode.dataset.display || termNode.textContent.trim(), termNode.dataset.context || '');
+    return;
+  }
+  const btn = e.target.closest('[data-speak]');
+  if (btn) speakText(btn.dataset.speak);
+});
+
+function speakText(text) {
+  const synth = window.speechSynthesis;
+  if (!synth || !text) return;
+  synth.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  const voiceSelect = document.getElementById('voiceSelect');
+  const rateRange = document.getElementById('rateRange');
+  utter.rate = parseFloat(rateRange.value || '0.9');
+  const selectedVoiceName = voiceSelect.value;
+  const voices = synth.getVoices();
+  const chosen = voices.find(v => v.name === selectedVoiceName);
+  if (chosen) utter.voice = chosen;
+  synth.speak(utter);
+}
+
+const voiceSelect = document.getElementById('voiceSelect');
+function loadVoices() {
+  const voices = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+  voiceSelect.innerHTML = '';
+  if (!voices.length) {
+    const op = document.createElement('option');
+    op.textContent = '浏览器默认英文语音';
+    op.value = '';
+    voiceSelect.appendChild(op);
+    return;
+  }
+  voices.forEach((v, i) => {
+    const op = document.createElement('option');
+    op.value = v.name;
+    op.textContent = `${v.name} (${v.lang})`;
+    if (i === 0) op.selected = true;
+    voiceSelect.appendChild(op);
+  });
+}
+loadVoices();
+if ('speechSynthesis' in window) {
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+updateGlossaryCard('engine', 'engine assembly');
+</script>
+
+</body>
+</html>
